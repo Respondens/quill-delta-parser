@@ -29,7 +29,7 @@ class Pick
      * @var Listener The listener object the picke was made from.
      */
     protected $listener;
-    
+
     /**
      * Create new line pick
      *
@@ -71,6 +71,6 @@ class Pick
      */
     public function isLast()
     {
-        return (count($this->listener->picks()) - 1) == $this->index;
+        return count($this->listener->picks()) - 1 == $this->index;
     }
 }

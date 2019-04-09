@@ -22,7 +22,7 @@ abstract class Listener
      * @var integer Type block listener
      */
     const TYPE_BLOCK = 2;
-    
+
     /**
      * @var integer First priority listener within the given type
      */
@@ -39,7 +39,7 @@ abstract class Listener
      *
      * @return integer
      */
-    abstract public function type(): int;
+    public abstract function type();
 
     /**
      * Undocumented function
@@ -47,14 +47,14 @@ abstract class Listener
      * @param Line $line
      * @return void
      */
-    abstract public function process(Line $line);
+    public abstract function process(Line $line);
 
     /**
      * Undocumented function
      *
      * @return integer
      */
-    public function priority(): int
+    public function priority()
     {
         return self::PRIORITY_EARLY_BIRD;
     }
@@ -80,7 +80,7 @@ abstract class Listener
      *
      * @return Line An array with Line objects, for IDE purposes we return the Line object as phpdoc
      */
-    public function picks() : array
+    public function picks()
     {
         return $this->_picks;
     }

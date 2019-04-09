@@ -74,16 +74,7 @@ class Lexer
     /**
      * @var array The listeneres grouped by type and priority.
      */
-    protected $listeners = [
-        Listener::TYPE_INLINE => [
-            Listener::PRIORITY_EARLY_BIRD => [],
-            Listener::PRIORITY_GARBAGE_COLLECTOR => [],
-        ],
-        Listener::TYPE_BLOCK => [
-            Listener::PRIORITY_EARLY_BIRD => [],
-            Listener::PRIORITY_GARBAGE_COLLECTOR => [],
-        ],
-    ];
+    protected $listeners = [Listener::TYPE_INLINE => [Listener::PRIORITY_EARLY_BIRD => [], Listener::PRIORITY_GARBAGE_COLLECTOR => []], Listener::TYPE_BLOCK => [Listener::PRIORITY_EARLY_BIRD => [], Listener::PRIORITY_GARBAGE_COLLECTOR => []]];
 
     /**
      * Initializer
@@ -94,7 +85,6 @@ class Lexer
     public function __construct($json, $loadBuiltinListeneres = true)
     {
         $this->json = $json;
-
         if ($loadBuiltinListeneres) {
             $this->loadBuiltinListeneres();
         }
@@ -105,18 +95,18 @@ class Lexer
      */
     public function loadBuiltinListeneres()
     {
-        $this->registerListener(new Bold);
-        $this->registerListener(new Italic);
-        $this->registerListener(new Color);
-        $this->registerListener(new Link);
-        $this->registerListener(new Video);
-        $this->registerListener(new Image);
-        $this->registerListener(new Strike);
-        $this->registerListener(new Underline);
-        $this->registerListener(new Heading);
-        $this->registerListener(new Text);
-        $this->registerListener(new Lists);
-        $this->registerListener(new Blockquote);
+        $this->registerListener(new Bold());
+        $this->registerListener(new Italic());
+        $this->registerListener(new Color());
+        $this->registerListener(new Link());
+        $this->registerListener(new Video());
+        $this->registerListener(new Image());
+        $this->registerListener(new Strike());
+        $this->registerListener(new Underline());
+        $this->registerListener(new Heading());
+        $this->registerListener(new Text());
+        $this->registerListener(new Lists());
+        $this->registerListener(new Blockquote());
     }
 
     /**
@@ -134,7 +124,7 @@ class Lexer
      *
      * @return array The json as array formated.
      */
-    public function getJsonArray() : array
+    public function getJsonArray()
     {
         return is_array($this->json) ? $this->json : self::decodeJson($this->json);
     }
@@ -144,7 +134,7 @@ class Lexer
      *
      * @return array
      */
-    public function getOps() : array
+    public function getOps()
     {
         return isset($this->getJsonArray()['ops']) ? $this->getJsonArray()['ops'] : $this->getJsonArray();
     }
@@ -163,7 +153,7 @@ class Lexer
     /**
      * @return array Returns an array with all line objects.
      */
-    public function getLines() : array
+    public function getLines()
     {
         return $this->_lines;
     }
@@ -180,6 +170,7 @@ class Lexer
     {
         $lines = [];
         $i = 0;
+
         foreach ($ops as $key => $delta) {
             // replace newline chars with internal expression
             $insert = $this->replaceNewlineWithExpression($delta['insert']);
@@ -191,14 +182,15 @@ class Lexer
                 // remove the last newline from the line, as it will be splited into lines anyhow.
                 $line = $this->removeLastNewline($insert);
                 // check if the original input was changed, in order to determine whether current line had new line char.
-                $hasEndNewline = ($line !== $insert);
+                $hasEndNewline = $line !== $insert;
                 // check if current input string has a new line char in the string
                 $hasNewline = $this->lineHasNewline($line);
                 // split the input string into parts / lines.
                 $parts = explode(self::NEWLINE_EXPRESSION, $line);
+
                 foreach ($parts as $index => $value) {
                     // check if this line had the end newline
-                    $hadEndNewline = ($hasEndNewline && ($index + 1) == count($parts)) ? true : false;
+                    $hadEndNewline = $hasEndNewline && $index + 1 == count($parts) ? true : false;
                     $lines[$i] = new Line($i, $value, isset($delta['attributes']) ? $delta['attributes'] : [], $this, $hadEndNewline, $hasNewline);
                     $i++;
                 }
@@ -216,7 +208,7 @@ class Lexer
      */
     protected function lineHasNewline($input)
     {
-        return (strpos($input, self::NEWLINE_EXPRESSION) !== false) ? true : false;
+        return strpos($input, self::NEWLINE_EXPRESSION) !== false ? true : false;
     }
 
     /**
@@ -243,7 +235,6 @@ class Lexer
             // convert the array into a json string
             return json_encode($insert);
         }
-
         $expLength = strlen(self::NEWLINE_EXPRESSION);
         // remove new line from the end of the string
         // as this explode split well be done anyhow or its already part of a new line
@@ -298,13 +289,12 @@ class Lexer
             $this->processListeners($line, Listener::TYPE_INLINE);
             $this->processListeners($line, Listener::TYPE_BLOCK);
         }
-
         $this->renderListeneres(Listener::TYPE_INLINE);
         $this->renderListeneres(Listener::TYPE_BLOCK);
-
         $buff = null;
+
         foreach ($this->_lines as $line) {
-            $buff.= $line->output;
+            $buff .= $line->output;
         }
 
         return $buff;
@@ -330,15 +320,12 @@ class Lexer
         if (!is_scalar($value)) {
             return false;
         }
-        
         $firstChar = substr($value, 0, 1);
-        
         if ($firstChar !== '{' && $firstChar !== '[') {
             return false;
         }
-        
         $json_check = json_decode($value);
-        
+
         return json_last_error() === JSON_ERROR_NONE;
     }
 

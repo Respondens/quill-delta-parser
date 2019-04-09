@@ -39,29 +39,25 @@ class Lists extends BlockListener
     public function render(Lexer $lexer)
     {
         $lists = [];
-
         $isOpen = false;
+
         foreach ($this->picks() as $pick) {
-            
             // get the first element within this list <li>
             $first = $pick->line->previous(function (Line $line) {
                 if ($line->isFirst() || $line->hasNewline()) {
                     return true;
                 }
             });
-            
-
             // while from first to pick line and store content in buffer
             $buffer = null;
-            $first->while(function (&$index, Line $line) use (&$buffer, $pick) {
+            $first->while(function (&$index, Line $line) use(&$buffer, $pick) {
                 $index++;
-                $buffer.= $line->input;
+                $buffer .= $line->input;
                 $line->setDone();
                 if ($index == $pick->line->getIndex()) {
                     return false;
                 }
             });
-
             // find out if last element of series of lists
             // if a. is no next element
             // or b. next element "has new line"
@@ -71,20 +67,17 @@ class Lists extends BlockListener
             })->hasNewline()) {
                 $isLast = true;
             }
-
             // write the li element.
             $output = null;
             if (!$isOpen && !$isLast) {
-                $output .= '<'.$this->getListAttribute($pick).'>';
+                $output .= '<' . $this->getListAttribute($pick) . '>';
                 $isOpen = true;
             }
-            $output.= '<li>' . $buffer .'</li>';
-            
+            $output .= '<li>' . $buffer . '</li>';
             if ($isLast && $isOpen) {
-                $output .= '</'.$this->getListAttribute($pick).'>';
+                $output .= '</' . $this->getListAttribute($pick) . '>';
                 $isOpen = false;
             }
-
             $pick->line->output = $output;
             $pick->line->setDone();
         }

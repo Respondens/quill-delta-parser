@@ -17,7 +17,7 @@ abstract class InlineListener extends Listener
     /**
      * {@inheritDoc}
      */
-    public function type(): int
+    public function type()
     {
         return self::TYPE_INLINE;
     }
@@ -51,7 +51,6 @@ abstract class InlineListener extends Listener
             $next = $pick->line->next(function (Line $line) {
                 return !$line->isInline();
             });
-
             if (!$next) {
                 throw new Exception("Unable to find a next element. Invalid DELTA on '{$this->input}'");
             }

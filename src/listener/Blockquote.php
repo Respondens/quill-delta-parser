@@ -14,7 +14,6 @@ use nadar\quill\Lexer;
  */
 class Blockquote extends BlockListener
 {
-
     /**
      * {@inheritDoc}
      */
@@ -38,13 +37,11 @@ class Blockquote extends BlockListener
                     return true;
                 }
             });
-
             // if there is no previous element, we take the same line element.
             if (!$prev) {
                 $prev = $pick->line;
             }
-
-            $pick->line->output = '<blockquote>'.$prev->input . $pick->line->renderPrepend() . '</blockquote>';
+            $pick->line->output = '<blockquote>' . $prev->input . $pick->line->renderPrepend() . '</blockquote>';
             $prev->setDone();
         }
     }

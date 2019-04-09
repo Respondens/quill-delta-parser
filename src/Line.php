@@ -36,7 +36,7 @@ class Line
      * @var integer The ID/Index/Row of the line
      */
     protected $index;
-    
+
     /**
      * @var array An array with all attributes which are assigned to this lines. attribute can be inline markers like
      * bold, italic, links and so on.
@@ -47,7 +47,7 @@ class Line
      * @var Lexer The lexer object in order to access other lines and elements.
      */
     protected $lexer;
-    
+
     /**
      * @var array An array with values which can be prependend to the actuall input string. This is mainly used if inline
      * elements are passed to the next "not" inline element.
@@ -82,7 +82,7 @@ class Line
      * @var boolean Whether this line has a newline or not, this information is already provided by the lines to ops method.
      */
     protected $hasNewline;
-    
+
     /**
      * Constructor
      *
@@ -220,13 +220,11 @@ class Line
         $i = $this->getIndex();
         while ($iterate) {
             $line = $this->lexer->getLine($i);
-
             if (!$line) {
                 $iterate = false;
                 return;
             }
             $iterate = call_user_func_array($condition, [&$i, $line]);
-
             if ($iterate !== false) {
                 $iterate = true;
             }
@@ -281,7 +279,6 @@ class Line
         if ($fn === null) {
             return $this->lexer->getLine($this->index + 1);
         }
-
         return $this->iterate($this, function ($i) {
             return ++$i;
         }, $fn);
@@ -308,7 +305,6 @@ class Line
         if ($fn === null) {
             return $this->lexer->getLine($this->index - 1);
         }
-
         return $this->iterate($this, function ($i) {
             return --$i;
         }, $fn);
@@ -341,7 +337,7 @@ class Line
     {
         return $this->index;
     }
-    
+
     /**
      * Set this line as picked.
      */
@@ -423,9 +419,7 @@ class Line
         if (!$this->isJsonInsert()) {
             return false;
         }
-
         $insert = $this->getArrayInsert();
-
         return array_key_exists($key, $insert) ? $insert[$key] : false;
     }
 }

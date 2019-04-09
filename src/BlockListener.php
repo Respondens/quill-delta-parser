@@ -15,7 +15,7 @@ abstract class BlockListener extends Listener
     /**
      * {@inheritDoc}
      */
-    public function type(): int
+    public function type()
     {
         return self::TYPE_BLOCK;
     }

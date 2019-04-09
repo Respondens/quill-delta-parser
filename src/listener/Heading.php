@@ -37,13 +37,11 @@ class Heading extends BlockListener
                     return true;
                 }
             });
-
             // if there is no previous element, we take the same line element.
             if (!$prev) {
                 $prev = $pick->line;
             }
-
-            $pick->line->output = '<h'.$pick->heading.'>'.$prev->input . $pick->line->renderPrepend() . '</h'.$pick->heading.'>';
+            $pick->line->output = '<h' . $pick->heading . '>' . $prev->input . $pick->line->renderPrepend() . '</h' . $pick->heading . '>';
             $prev->setDone();
         }
     }

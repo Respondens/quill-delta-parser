@@ -18,14 +18,14 @@ class Color extends InlineListener
      * but people copy past content from somewhere else which will then generate the color attribute. 
      */
     public $ignore = false;
-    
+
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        if (($color = $line->getAttribute('color'))) {
-            $this->updateInput($line, $this->ignore ? $line->input : '<span style="color:'.$color.'">'.$line->input.'</span>');
+        if ($color = $line->getAttribute('color')) {
+            $this->updateInput($line, $this->ignore ? $line->input : '<span style="color:' . $color . '">' . $line->input . '</span>');
         }
     }
 }

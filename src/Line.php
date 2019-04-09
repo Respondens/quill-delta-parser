@@ -214,7 +214,7 @@ class Line
      * second is the current line.
      * @return void
      */
-    public function while(callable $condition)
+    public function while_php5(callable $condition)
     {
         $iterate = true;
         $i = $this->getIndex();
@@ -222,6 +222,7 @@ class Line
             $line = $this->lexer->getLine($i);
             if (!$line) {
                 $iterate = false;
+
                 return;
             }
             $iterate = call_user_func_array($condition, [&$i, $line]);
@@ -279,6 +280,7 @@ class Line
         if ($fn === null) {
             return $this->lexer->getLine($this->index + 1);
         }
+
         return $this->iterate($this, function ($i) {
             return ++$i;
         }, $fn);
@@ -305,6 +307,7 @@ class Line
         if ($fn === null) {
             return $this->lexer->getLine($this->index - 1);
         }
+
         return $this->iterate($this, function ($i) {
             return --$i;
         }, $fn);
@@ -420,6 +423,7 @@ class Line
             return false;
         }
         $insert = $this->getArrayInsert();
+
         return array_key_exists($key, $insert) ? $insert[$key] : false;
     }
 }

@@ -50,7 +50,7 @@ class Lists extends BlockListener
             });
             // while from first to pick line and store content in buffer
             $buffer = null;
-            $first->while(function (&$index, Line $line) use(&$buffer, $pick) {
+            $first->while_php5(function (&$index, Line $line) use(&$buffer, $pick) {
                 $index++;
                 $buffer .= $line->input;
                 $line->setDone();

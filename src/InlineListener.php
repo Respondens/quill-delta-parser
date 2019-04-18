@@ -52,7 +52,7 @@ abstract class InlineListener extends Listener
                 return !$line->isInline();
             });
             if (!$next) {
-                throw new Exception("Unable to find a next element. Invalid DELTA on '{$this->input}'");
+                throw new Exception("Unable to find a next element. Invalid DELTA on '{$pick->line->input}'. Maybe your delta code does not end with a newline?");
             }
             $next->addPrepend($pick->line->input);
         }

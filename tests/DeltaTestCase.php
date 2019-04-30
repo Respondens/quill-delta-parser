@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace nadar\quill\tests;
+
+error_reporting(E_ALL);
 
 use PHPUnit\Framework\TestCase;
 use nadar\quill\Lexer;
-use nadar\quill\listener\Text;
-use nadar\quill\listener\Heading;
-use nadar\quill\listener\Bold;
 
 class DeltaTestCase extends TestCase
 {

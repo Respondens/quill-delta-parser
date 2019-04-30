@@ -6,7 +6,6 @@ use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
 use nadar\quill\InlineListener;
-
 /**
  * Convert Image attributes into image element.
  *
@@ -16,7 +15,6 @@ use nadar\quill\InlineListener;
 class Image extends InlineListener
 {
     public $wrapper = '<img src="{src}" alt="" class="img-responsive img-fluid" />';
-
     /**
      * {@inheritDoc}
      */
@@ -24,7 +22,7 @@ class Image extends InlineListener
     {
         $embedUrl = $line->insertJsonKey('image');
         if ($embedUrl) {
-            $this->updateInput($line, str_replace(['{src}'], [$embedUrl], $this->wrapper));
+            $this->updateInput($line, str_replace(['{src}'], [$line->getLexer()->escape($embedUrl)], $this->wrapper));
         }
     }
 }

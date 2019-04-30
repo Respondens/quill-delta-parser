@@ -25,6 +25,7 @@ composer require nadar/quill-delta-parser
 use nadar\quill\Lexer;
 
 $lexer = new Lexer($json);
+$lexer->escapeInput = true;
 
 // echoing the html for the given json ops.
 echo $lexer->render();
@@ -67,6 +68,21 @@ This would render the following HTML:
 <p><br></p>
 <p>This is the php quill <strong>parser</strong>!</p>
 ```
+
+## Security
+
+Currently html escaping is not turned on by default. This means that a delta where the insert or attributes contain user supplied data can cause XSS.
+
+To use html escaping always set `$lexer->escapeInput` to true:
+
+```php
+use nadar\quill\Lexer;
+
+$lexer = new Lexer($json);
+$lexer->escapeInput = true;
+```
+
+The next major version will set this to true by default.
 
 ## Extend the Parser
 
@@ -118,6 +134,19 @@ $lexer->registerListener($image);
 echo $lexer->render();
 ```
 
+## Debuging
+
+Sometimes the handling of delta and how the data is parsed is very hard to debug and understand. Therefore you can use the debugger class which will print a table with informations about how the data is parsed.
+
+```php
+$lexer = new Lexer($json);
+$lexer->render(); // make sure to run the render before call debugPrint();
+ 
+$debug = new Debug($lexer);
+echo $debug->debugPrint();
+```
+
 #### Credits
 
++ [Lode Claassen](https://github.com/lode)
 + [Dean Blackborough](https://github.com/deanblackborough)

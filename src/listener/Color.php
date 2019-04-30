@@ -4,7 +4,6 @@ namespace nadar\quill\listener;
 
 use nadar\quill\Line;
 use nadar\quill\InlineListener;
-
 /**
  * Convert color attributes into span tag.
  *
@@ -18,14 +17,13 @@ class Color extends InlineListener
      * but people copy past content from somewhere else which will then generate the color attribute. 
      */
     public $ignore = false;
-
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
         if ($color = $line->getAttribute('color')) {
-            $this->updateInput($line, $this->ignore ? $line->input : '<span style="color:' . $color . '">' . $line->input . '</span>');
+            $this->updateInput($line, $this->ignore ? $line->input : '<span style="color:' . $line->getLexer()->escape($color) . '">' . $line->getInput() . '</span>');
         }
     }
 }

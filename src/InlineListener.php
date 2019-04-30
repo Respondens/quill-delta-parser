@@ -3,7 +3,6 @@
 namespace nadar\quill;
 
 use Exception;
-
 /**
  * Inline Listenere.
  *
@@ -21,12 +20,11 @@ abstract class InlineListener extends Listener
     {
         return self::TYPE_INLINE;
     }
-
     /**
      * A short hand method for handling inline elements.
      *
      * 1. change input value
-     * 2. set as done and inline
+     * 2. set as done, inline, and escaped
      * 3. Add to pick list, in order to process in render method
      *
      * @param Line $line
@@ -39,9 +37,9 @@ abstract class InlineListener extends Listener
         $line->input = $value;
         $line->setDone();
         $line->setAsInline();
+        $line->setAsEscaped();
         $this->pick($line);
     }
-
     /**
      * {@inheritDoc}
      */

@@ -2,9 +2,10 @@
 
 namespace nadar\quill\listener;
 
+use Exception;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
-
+use nadar\quill\Lexer;
 /**
  * Convert header into heading elements.
  *
@@ -13,6 +14,11 @@ use nadar\quill\BlockListener;
  */
 class Heading extends BlockListener
 {
+    /**
+     * @var array Supported header levels.
+     * @since 1.2.0
+     */
+    public $levels = [1, 2, 3, 4, 5, 6];
     /**
      * {@inheritDoc}
      */
@@ -24,13 +30,18 @@ class Heading extends BlockListener
             $line->setDone();
         }
     }
-
     /**
      * {@inheritDoc}
+     * 
+     * @throws Exception for unknown heading levels {@since 1.2.0}
      */
-    public function render(\nadar\quill\Lexer $lexer)
+    public function render(Lexer $lexer)
     {
         foreach ($this->picks() as $pick) {
+            if (!in_array($pick->heading, $this->levels)) {
+                // prevent html injection in case the attribute is user input
+                throw new Exception('An unknown heading level "' . $pick->heading . '" has been detected.');
+            }
             // get all
             $prev = $pick->line->previous(function (Line $line) {
                 if (!$line->isInline()) {
@@ -41,7 +52,7 @@ class Heading extends BlockListener
             if (!$prev) {
                 $prev = $pick->line;
             }
-            $pick->line->output = '<h' . $pick->heading . '>' . $prev->input . $pick->line->renderPrepend() . '</h' . $pick->heading . '>';
+            $pick->line->output = '<h' . $pick->heading . '>' . $prev->getInput() . $pick->line->renderPrepend() . '</h' . $pick->heading . '>';
             $prev->setDone();
         }
     }

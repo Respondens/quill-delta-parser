@@ -5,7 +5,6 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
-
 /**
  * Convert all the not done elements into paragraphs.
  *
@@ -15,11 +14,8 @@ use nadar\quill\BlockListener;
 class Text extends BlockListener
 {
     const CLOSEP = '</p>';
-
     const OPENP = '<p>';
-
     const LINEBREAK = '<br>';
-
     /**
      * {@inheritDoc}
      */
@@ -27,7 +23,6 @@ class Text extends BlockListener
     {
         return self::PRIORITY_GARBAGE_COLLECTOR;
     }
-
     /**
      * {@inheritDoc}
      */
@@ -37,14 +32,12 @@ class Text extends BlockListener
             $this->pick($line);
         }
     }
-
     /**
      * {@inheritDoc}
      */
     public function render(Lexer $lexer)
     {
         $isOpen = false;
-
         foreach ($this->picks() as $pick) {
             if (!$pick->line->isDone() && !$pick->line->hasAttributes() && !$pick->line->isInline()) {
                 $pick->line->setDone();
@@ -56,7 +49,7 @@ class Text extends BlockListener
                     $isOpen = $this->output($output, self::OPENP, true);
                 }
                 // write the actuall content of the element into the output
-                $output[] = $pick->line->isEmpty() ? self::LINEBREAK : $pick->line->renderPrepend() . $pick->line->input;
+                $output[] = $pick->line->isEmpty() ? self::LINEBREAK : $pick->line->renderPrepend() . $pick->line->getInput();
                 // if its open and we have a next element, and the next element is not an inline, we close!
                 if ($isOpen && ($next && !$next->isInline())) {
                     $isOpen = $this->output($output, self::CLOSEP, false);
@@ -84,7 +77,6 @@ class Text extends BlockListener
             }
         }
     }
-
     /**
      * Helper method simplify output writer.
      *
@@ -96,7 +88,6 @@ class Text extends BlockListener
     protected function output(&$output, $tag, $openState)
     {
         $output[] = $tag;
-
         return $openState;
     }
 }

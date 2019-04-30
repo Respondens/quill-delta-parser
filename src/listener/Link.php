@@ -5,7 +5,6 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\InlineListener;
 use nadar\quill\Lexer;
-
 /**
  * Convert links into a inline elements.
  *
@@ -21,7 +20,7 @@ class Link extends InlineListener
     {
         $link = $line->getAttribute('link');
         if ($link) {
-            $this->updateInput($line, '<a href="' . $link . '" target="_blank">' . $line->input . '</a>');
+            $this->updateInput($line, '<a href="' . $line->getLexer()->escape($link) . '" target="_blank">' . $line->getInput() . '</a>');
         }
     }
 }

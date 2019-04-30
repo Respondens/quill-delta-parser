@@ -14,22 +14,18 @@ class Pick
      * @var Line
      */
     public $line;
-
     /**
      * @var array An array with options which can be read trough magical getter
      */
     protected $options = [];
-
     /**
      * @var integer Contains the current index number for this pick.
      */
     protected $index;
-
     /**
      * @var Listener The listener object the picke was made from.
      */
     protected $listener;
-
     /**
      * Create new line pick
      *
@@ -45,7 +41,6 @@ class Pick
         $this->options = $options;
         $this->index = $index;
     }
-
     /**
      * @param mixed $name
      */
@@ -53,7 +48,6 @@ class Pick
     {
         return $this->options[$name];
     }
-
     /**
      * Whether current pick is the first pick inside this listenere.
      *
@@ -63,7 +57,6 @@ class Pick
     {
         return $this->index == 0;
     }
-
     /**
      * Whether current pick is the last pick inside the list of picks.
      *

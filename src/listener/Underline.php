@@ -4,7 +4,6 @@ namespace nadar\quill\listener;
 
 use nadar\quill\InlineListener;
 use nadar\quill\Line;
-
 /**
  * Process underline elements
  *
@@ -19,7 +18,7 @@ class Underline extends InlineListener
     public function process(Line $line)
     {
         if ($line->getAttribute('underline')) {
-            $this->updateInput($line, '<u>' . $line->input . '</u>');
+            $this->updateInput($line, '<u>' . $line->getInput() . '</u>');
         }
     }
 }

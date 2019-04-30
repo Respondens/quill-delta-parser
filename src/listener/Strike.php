@@ -4,6 +4,7 @@ namespace nadar\quill\listener;
 
 use nadar\quill\InlineListener;
 use nadar\quill\Line;
+
 /**
  * Process strike elements
  *

@@ -5,6 +5,7 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
+
 /**
  * Convert all the not done elements into paragraphs.
  *
@@ -14,8 +15,11 @@ use nadar\quill\BlockListener;
 class Text extends BlockListener
 {
     const CLOSEP = '</p>';
+
     const OPENP = '<p>';
+
     const LINEBREAK = '<br>';
+
     /**
      * {@inheritDoc}
      */
@@ -23,6 +27,7 @@ class Text extends BlockListener
     {
         return self::PRIORITY_GARBAGE_COLLECTOR;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -32,12 +37,14 @@ class Text extends BlockListener
             $this->pick($line);
         }
     }
+
     /**
      * {@inheritDoc}
      */
     public function render(Lexer $lexer)
     {
         $isOpen = false;
+
         foreach ($this->picks() as $pick) {
             if (!$pick->line->isDone() && !$pick->line->hasAttributes() && !$pick->line->isInline()) {
                 $pick->line->setDone();
@@ -77,6 +84,7 @@ class Text extends BlockListener
             }
         }
     }
+
     /**
      * Helper method simplify output writer.
      *
@@ -88,6 +96,7 @@ class Text extends BlockListener
     protected function output(&$output, $tag, $openState)
     {
         $output[] = $tag;
+
         return $openState;
     }
 }

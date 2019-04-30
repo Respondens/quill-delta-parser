@@ -6,6 +6,7 @@ use Exception;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
 use nadar\quill\Lexer;
+
 /**
  * Convert header into heading elements.
  *
@@ -19,6 +20,7 @@ class Heading extends BlockListener
      * @since 1.2.0
      */
     public $levels = [1, 2, 3, 4, 5, 6];
+
     /**
      * {@inheritDoc}
      */
@@ -30,6 +32,7 @@ class Heading extends BlockListener
             $line->setDone();
         }
     }
+
     /**
      * {@inheritDoc}
      * 

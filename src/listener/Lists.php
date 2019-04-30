@@ -7,6 +7,7 @@ use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
 use nadar\quill\Pick;
+
 /**
  * Convert List elements (ul, ol) into Block element.
  *
@@ -16,8 +17,11 @@ use nadar\quill\Pick;
 class Lists extends BlockListener
 {
     const ATTRIBUTE_LIST = 'list';
+
     const LIST_TYPE_BULLET = 'bullet';
+
     const LIST_TYPE_ORDERED = 'ordered';
+
     /**
      * {@inheritDoc}
      */
@@ -29,6 +33,7 @@ class Lists extends BlockListener
             $line->setDone();
         }
     }
+
     /**
      * {@inheritDoc}
      */
@@ -36,6 +41,7 @@ class Lists extends BlockListener
     {
         $lists = [];
         $isOpen = false;
+
         foreach ($this->picks() as $pick) {
             // get the first element within this list <li>
             $first = $pick->line->previous(function (Line $line) {
@@ -77,6 +83,7 @@ class Lists extends BlockListener
             $pick->line->setDone();
         }
     }
+
     /**
      * Get the html tag for the given value.
      * 

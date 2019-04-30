@@ -5,6 +5,7 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
 use nadar\quill\Lexer;
+
 /**
  * Convert Blockquote Elements
  *
@@ -23,6 +24,7 @@ class Blockquote extends BlockListener
             $line->setDone();
         }
     }
+
     /**
      * {@inheritDoc}
      */

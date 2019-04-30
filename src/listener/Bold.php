@@ -4,6 +4,7 @@ namespace nadar\quill\listener;
 
 use nadar\quill\Line;
 use nadar\quill\InlineListener;
+
 /**
  * Convert Bold attributes into tags.
  *

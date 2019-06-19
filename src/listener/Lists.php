@@ -45,7 +45,7 @@ class Lists extends BlockListener
         foreach ($this->picks() as $pick) {
             $first = $pick->line;
             // Go back to the first element which is not in the LIST of items and store the current item into $first
-            $pick->line->while(function (&$index, Line $line) use($pick, &$first) {
+            $pick->line->while_php5(function (&$index, Line $line) use($pick, &$first) {
                 $index--;
                 // its the same line as the start.. skip this one as its by default included in while operations
                 if ($line == $pick->line) {
@@ -60,7 +60,7 @@ class Lists extends BlockListener
             });
             // while from first to the pick line and store content in buffer
             $buffer = null;
-            $first->while(function (&$index, Line $line) use(&$buffer, $pick) {
+            $first->while_php5(function (&$index, Line $line) use(&$buffer, $pick) {
                 $index++;
                 $buffer .= $line->getInput();
                 $line->setDone();

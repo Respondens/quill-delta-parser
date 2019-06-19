@@ -250,7 +250,7 @@ class Line
      * ```php
      * $buffer = null;
      *
-     * $line->while(function (&$index, Line $line) use (&$buffer) {
+     * $line->while_php5(function (&$index, Line $line) use (&$buffer) {
      *     $index++;
      *     $buffer.= $line->input;
      *
@@ -268,7 +268,7 @@ class Line
      * second is the current line.
      * @return void
      */
-    public function while(callable $condition)
+    public function while_php5(callable $condition)
     {
         $iterate = true;
         $i = $this->getIndex();
@@ -298,7 +298,7 @@ class Line
     {
         $next = $this->next();
         if ($next) {
-            return $next->while(function (&$index, Line $line) use($condition) {
+            return $next->while_php5(function (&$index, Line $line) use($condition) {
                 $index++;
 
                 return call_user_func($condition, $line);
@@ -318,7 +318,7 @@ class Line
     {
         $previous = $this->previous();
         if ($previous) {
-            return $previous->while(function (&$index, Line $line) use($condition) {
+            return $previous->while_php5(function (&$index, Line $line) use($condition) {
                 $index--;
 
                 return call_user_func($condition, $line);

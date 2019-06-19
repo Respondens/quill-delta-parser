@@ -18,3 +18,8 @@ To reduce unnecessary diffs, we run the code through PHP-CS-Fixer.
 Be aware that this is not perfect and will still result in whitespace changes.
 - `composer global require friendsofphp/php-cs-fixer`
 - `php-cs-fixer fix`
+
+## 4. Manually backports
+The transpiler doesn't fix the reserved `while` statement.
+Change the method `Line->while()` to `Line->while_php5()`.
+Search for all calls to `->while(` and change them accordingly.

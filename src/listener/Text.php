@@ -76,8 +76,8 @@ class Text extends BlockListener
                 } elseif ($isOpen && $pick->line->hasEndNewline()) {
                     $isOpen = $this->output($output, self::CLOSEP, false);
                 }
-                // we have a next element and the next elmenet is inline and its not open, open ...!
-                if ($next && $next->isInline() && !$isOpen) {
+                // we have a next element and the next elmenet is inline and its not open, and the current elemnt is not an endNewline element
+                if ($next && $next->isInline() && !$isOpen && !$pick->line->hasEndNewline()) {
                     $isOpen = $this->output($output, self::OPENP, true);
                 }
                 $pick->line->output = implode("", $output);

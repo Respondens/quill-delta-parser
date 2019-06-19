@@ -28,6 +28,24 @@ class Line
     const STATUS_DONE = 3;
 
     /**
+     * @var array An array with values which can be prependend to the actuall input string. This is mainly used if inline
+     * elements are passed to the next "not" inline element.
+     */
+    public $prepend = [];
+
+    /**
+     * @var string The input string which is assigned from the line parser. This is the actual content of the line itself!
+     * @deprecated Deprecated since 1.2.0 will be removed in 2.0 use getInput() instead.
+     */
+    public $input;
+
+    /**
+     * @var string The output is the value which will actually rendered by the lexer. So lines which directly write to the output
+     * buffer needs to fill in this variable.
+     */
+    public $output;
+
+    /**
      * @var integer Holds the current status of the line.
      */
     protected $status = 1;
@@ -47,24 +65,6 @@ class Line
      * @var Lexer The lexer object in order to access other lines and elements.
      */
     protected $lexer;
-
-    /**
-     * @var array An array with values which can be prependend to the actuall input string. This is mainly used if inline
-     * elements are passed to the next "not" inline element.
-     */
-    public $prepend = [];
-
-    /**
-     * @var string The input string which is assigned from the line parser. This is the actual content of the line itself!
-     * @deprecated Deprecated since 1.2.0 will be removed in 2.0 use getInput() instead.
-     */
-    public $input;
-
-    /**
-     * @var string The output is the value which will actually rendered by the lexer. So lines which directly write to the output
-     * buffer needs to fill in this variable.
-     */
-    public $output;
 
     /**
      * @var boolean Whether the current line is handled as "inline-line" or not. Inline lines have different effects when parsing the
@@ -114,7 +114,7 @@ class Line
      * Whether the current line had a new line char or not, this is very important in terms of finding out wether its a block
      * element or inline element.
      *
-     * This informations as assigned in the opsToLine() method in the lexer object.
+     * This informations is assigned in the opsToLine() method in the lexer object.
      *
      * @return boolean
      */
@@ -145,7 +145,7 @@ class Line
 
     /**
      * Get the Lexer
-     * 
+     *
      * @since 1.2.0
      * @return Lexer
      */
@@ -156,9 +156,9 @@ class Line
 
     /**
      * Get the line's input in a safe way.
-     * 
+     *
      * Escaping for html is done if this wasn't done by a previous listener already.
-     * 
+     *
      * @since 1.2.0
      * @return string
      */
@@ -173,9 +173,9 @@ class Line
 
     /**
      * Get the raw line's input, this might not be escaped for html context.
-     * 
+     *
      * > Note it could be escaped if a previous inline listener updated the input value
-     * 
+     *
      * @since 1.2.0
      * @return string
      */
@@ -244,10 +244,13 @@ class Line
      * An example how to while trough lines, increasing (down) the index until a certain condition
      * ($line->isFirst) happens writing lint input into a buffer variable.
      *
+     * > Keep in mind that while() will contain the line where the function applys, so the first line will always be
+     * > the line you apply the while() function.
+     *
      * ```php
      * $buffer = null;
      *
-     * $line->while(function (&$index, Line $line) use (&$buffer) {
+     * $line->while_php5(function (&$index, Line $line) use (&$buffer) {
      *     $index++;
      *     $buffer.= $line->input;
      *
@@ -258,6 +261,8 @@ class Line
      *
      * echo $buffer;
      * ```
+     *
+     * > Keep in mind that `false` must be returned to stop the while process.
      *
      * @param callable $condition A callable which requires 2 params, the first is the index which is passed as reference,
      * second is the current line.
@@ -282,7 +287,58 @@ class Line
     }
 
     /**
+     * While loop down (to the next elements) until false is returend.
+     *
+     * > This metod wont return the line.
+     *
+     * @param callable $condition The while condition until false is returned.
+     * @since 1.3.0
+     */
+    public function whileNext(callable $condition)
+    {
+        $next = $this->next();
+        if ($next) {
+            return $next->while_php5(function (&$index, Line $line) use($condition) {
+                $index++;
+
+                return call_user_func($condition, $line);
+            });
+        }
+    }
+
+    /**
+     * While loop up (to the previous elements) until false is returend.
+     *
+     * > This metod wont return the line.
+     *
+     * @param callable $condition The while condition until false is returned.
+     * @since 1.3.0
+     */
+    public function whilePrevious(callable $condition)
+    {
+        $previous = $this->previous();
+        if ($previous) {
+            return $previous->while_php5(function (&$index, Line $line) use($condition) {
+                $index--;
+
+                return call_user_func($condition, $line);
+            });
+        }
+    }
+
+    /**
      * Iteration helper the go forward and backward in lines.
+     *
+     * The condition contains whether index should go up or down.
+     *
+     * ```php
+     * return $this->iterate($line, function ($i) {
+     *    return $i+1;
+     * }, function(Line $line) {
+     *      // will stop the process and return this current line
+     *      return true;
+     * });
+     * ```
      *
      * @param Line $line
      * @param callable $condition The condition callable for the index
@@ -335,7 +391,7 @@ class Line
         }
 
         return $this->iterate($this, function ($i) {
-            return ++$i;
+            return $i + 1;
         }, $fn);
     }
 
@@ -362,7 +418,7 @@ class Line
         }
 
         return $this->iterate($this, function ($i) {
-            return --$i;
+            return $i - 1;
         }, $fn);
     }
 
@@ -386,7 +442,7 @@ class Line
 
     /**
      * Setter method whether the current line is escaped or not.
-     * 
+     *
      * @since 1.2.0
      */
     public function setAsEscaped()
@@ -396,7 +452,7 @@ class Line
 
     /**
      * Whether the current line is escaped or not.
-     * 
+     *
      * @since 1.2.0
      * @return boolean
      */
@@ -424,7 +480,8 @@ class Line
     }
 
     /**
-     * Whether current line is picked or not.
+     * Whether current line is picked or not. If the line has been picked an is marked as
+     * done, is picked will return false.
      *
      * @return boolean
      */
@@ -499,5 +556,31 @@ class Line
         $insert = $this->getArrayInsert();
 
         return array_key_exists($key, $insert) ? $insert[$key] : false;
+    }
+
+    private $_debug = [];
+
+    /**
+     * Add debug message for this line if {{Lexer::$debug}} is enabled.
+     *
+     * @param string $message The message which should be logged.
+     * @since 1.3.0
+     */
+    public function debugInfo($message)
+    {
+        if ($this->lexer->debug) {
+            $this->_debug[] = $message;
+        }
+    }
+
+    /**
+     * Return an array with all debug informations
+     *
+     * @return array
+     * @since 1.3.0
+     */
+    public function getDebugInfo()
+    {
+        return $this->_debug;
     }
 }

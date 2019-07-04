@@ -439,7 +439,7 @@ class Line
      *
      * @return boolean
      */
-    public function isInline(): bool
+    public function isInline()
     {
         return $this->isInline;
     }

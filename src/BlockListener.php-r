@@ -19,7 +19,6 @@ abstract class BlockListener extends Listener
     {
         return self::TYPE_BLOCK;
     }
-
     /**
      * Returns the first Line from a Pick. If the Pick is the first Line, it will return it's own pick
      * This is done because blockItems can consist of multiple inline items
@@ -31,7 +30,7 @@ abstract class BlockListener extends Listener
     protected function getFirstLine(Pick $pick)
     {
         $first = $pick->line;
-        $pick->line->while_php5(function (&$index, Line $line) use($pick, &$first) {
+        $pick->line->while(function (&$index, Line $line) use($pick, &$first) {
             $index--;
             // its the same line as the start.. skip this one as its by default included in while operations
             if ($line === $pick->line) {
@@ -41,10 +40,8 @@ abstract class BlockListener extends Listener
             }
             // assign the line to $first
             $first = $line;
-
             return true;
         });
-
         return $first;
     }
 }

@@ -44,6 +44,7 @@ class Lists extends BlockListener
 
         foreach ($this->picks() as $pick) {
             $first = $this->getFirstLine($pick);
+
             // while from first to the pick line and store content in buffer
             $buffer = null;
             $first->while_php5(function (&$index, Line $line) use(&$buffer, $pick) {
@@ -64,7 +65,7 @@ class Lists extends BlockListener
                     return false;
                 }
                 // if one of those new lines contains a endnew line or newline or is block level store this information
-                if ($line->hasEndNewline() || $line->hasNewline() || $line->isJsonInsert()) {
+                if ($line->hasEndNewline() || $line->hasNewline() || ($line->isJsonInsert() && !$line->isInline())) {
                     $hasNextInside = true;
                 }
             });

@@ -154,7 +154,7 @@ class Lexer
      */
     public function registerListener(Listener $listener)
     {
-        $this->listeners[$listener->type()][$listener->priority()][get_class($listener)] = $listener;
+        $this->listeners[$listener->type()][$listener->priority()][spl_object_hash($listener)] = $listener;
     }
 
     /**

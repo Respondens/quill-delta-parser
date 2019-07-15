@@ -14,7 +14,7 @@ use nadar\quill\Lexer;
  */
 class Link extends InlineListener
 {
-    const ATTRIBUTE_NAME = 'link';
+    const ATTRIBUTE_NAME = 'link'
 
     /**
      * @var string The wrapper template which is used to generate the link tag

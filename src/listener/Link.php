@@ -14,6 +14,8 @@ use nadar\quill\Lexer;
  */
 class Link extends InlineListener
 {
+    const ATTRIBUTE_NAME = 'link';
+
     /**
      * @var string The wrapper template which is used to generate the link tag
      * @since 2.3.0
@@ -25,7 +27,7 @@ class Link extends InlineListener
      */
     public function process(Line $line)
     {
-        $link = $line->getAttribute('link');
+        $link = $line->getAttribute(self::ATTRIBUTE_NAME);
         if ($link) {
             $this->updateInput($line, str_replace(['{link}', '{text}'], [$line->getLexer()->escape($link), $line->getInput()], $this->wrapper));
         }

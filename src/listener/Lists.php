@@ -80,11 +80,12 @@ class Lists extends BlockListener
                 $output .= '</' . $listTag . '>';
                 $isOpen = false;
             }
-            // create the opining OL/UL tag if:
-            //  a. its not already open AND $isLast is false (which means not the last element)
-            //  b. or its the first the pick inside the picked elements list https://github.com/nadar/quill-delta-parser/issues/8
-            if (!$isOpen && !$isLast || !$isOpen && $pick->isFirst()) {
-                $output .= '<' . $this->getListAttribute($pick) . '>';
+
+            // create the opening OL/UL tag
+            // opening tag process has been simplified, see https://github.com/nadar/quill-delta-parser/pull/33
+            // and https://github.com/nadar/quill-delta-parser/issues/30
+            if (!$isOpen) {
+                $output .= '<'.$this->getListAttribute($pick).'>';
                 $isOpen = true;
             }
             // write the li element.

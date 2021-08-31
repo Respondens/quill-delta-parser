@@ -14,6 +14,10 @@ use nadar\quill\listener\Underline;
 use nadar\quill\listener\Video;
 use nadar\quill\listener\Image;
 use nadar\quill\listener\Color;
+use nadar\quill\listener\Font;
+use nadar\quill\listener\Script;
+use nadar\quill\listener\Align;
+use nadar\quill\listener\CodeBlock;
 
 /**
  * Lexer Delta Parser.
@@ -72,10 +76,10 @@ class Lexer
     /**
      * @var boolean Whether input should be escaped by listeners when mixed with html elements.
      * Note that a specific listener can decide to not escape if their output should be raw html.
-     * Defaults to false, will default to true in the next major version.
+     * If script and other insecure input values should be allowed this can be turned off but its not recommend!
      * @since 1.2.0
      */
-    public $escapeInput = false;
+    public $escapeInput = true;
 
     /**
      * @var boolean These flags are used for escaping values for mixing with a html context.
@@ -121,7 +125,7 @@ class Lexer
     /**
      * Initializer
      *
-     * @param string $json The delta ops json as string or as already parsed array.
+     * @param string|array $json The delta ops json as string or as already parsed array.
      * @param boolean $loadBuiltinListeneres Whether the built in listeneres should be loaded or not.
      */
     public function __construct($json, $loadBuiltinListeneres = true)
@@ -147,9 +151,13 @@ class Lexer
         $this->registerListener(new Strike);
         $this->registerListener(new Underline);
         $this->registerListener(new Heading);
+        $this->registerListener(new CodeBlock);
         $this->registerListener(new Text);
         $this->registerListener(new Lists);
         $this->registerListener(new Blockquote);
+        $this->registerListener(new Font);
+        $this->registerListener(new Script);
+        $this->registerListener(new Align);
     }
 
     /**
@@ -271,14 +279,14 @@ class Lexer
     }
 
     /**
-     * Undocumented function
+     * Replace new lines with an internal representation that aids debugging
      *
-     * @param [type] $string
-     * @return void
+     * @param array|string $string
+     * @return array|string
      */
-    protected function replaceNewlineWithExpression($string)
+    protected function replaceNewlineWithExpression($input)
     {
-        return str_replace(self::DELTA_EOL, self::NEWLINE_EXPRESSION, $string);
+        return is_array($input) ? $input : str_replace(self::DELTA_EOL, self::NEWLINE_EXPRESSION, $input);
     }
 
     /**

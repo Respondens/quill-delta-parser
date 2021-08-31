@@ -1,8 +1,8 @@
 # Quill Delta to HTML Parser
 
-A PHP library to parse [Quill WYSIWYG](https://quilljs.com/) [Deltas](https://github.com/quilljs/delta) into HTML - Flexibel and extendible for custom elements. Every element is parsed by the same mechanism, this makes it easy to extend and understand.
+A PHP library to parse [Quill WYSIWYG](https://quilljs.com/) editor [deltas](https://github.com/quilljs/delta) into HTML - flexible and extendible for custom elements. Every element is parsed by the same mechanism, this makes it easy to extend and understand.
 
-[![Build Status](https://travis-ci.org/nadar/quill-delta-parser.svg?branch=master)](https://travis-ci.org/nadar/quill-delta-parser)
+![Tests](https://github.com/nadar/quill-delta-parser/workflows/Tests/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/fdf80e7b61e4505bc421/maintainability)](https://codeclimate.com/github/nadar/quill-delta-parser/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/fdf80e7b61e4505bc421/test_coverage)](https://codeclimate.com/github/nadar/quill-delta-parser/test_coverage)
 [![Latest Stable Version](https://poser.pugx.org/nadar/quill-delta-parser/v/stable)](https://packagist.org/packages/nadar/quill-delta-parser)
@@ -13,7 +13,7 @@ What is Quill? Quill is a free, open source WYSIWYG editor built for the modern 
 
 ## Installation
 
-The package is only available trough composer:
+The package is only available through composer:
 
 ```sh
 composer require nadar/quill-delta-parser
@@ -22,10 +22,11 @@ composer require nadar/quill-delta-parser
 ## Usage
 
 ```php
-use nadar\quill\Lexer;
+// ensure to load the autoload file from composer somehwere in your application
+require __DIR__ . '/vendor/autoload.php';
 
-$lexer = new Lexer($json);
-$lexer->escapeInput = true;
+// create the lexer object with your given quill json delta code (either an array or string)
+$lexer = new \nadar\quill\Lexer($json);
 
 // echoing the html for the given json ops.
 echo $lexer->render();
@@ -69,24 +70,9 @@ This would render the following HTML:
 <p>This is the php quill <strong>parser</strong>!</p>
 ```
 
-## Security
-
-Currently html escaping is not turned on by default. This means that a delta where the insert or attributes contain user supplied data can cause XSS.
-
-To use html escaping always set `$lexer->escapeInput` to true:
-
-```php
-use nadar\quill\Lexer;
-
-$lexer = new Lexer($json);
-$lexer->escapeInput = true;
-```
-
-The next major version will set this to true by default.
-
 ## Extend the Parser
 
-In order to extend the Parser by adding your own listeneres (this can be the case if you are using quill plugins which generates custom delta code), you have to decide whether its:
+In order to extend the Parser by adding your own listeneres (this can be the case if you are using quill plugins which generates custom delta code), you have to decide whether it's an:
 
 + inline element: Replaces content with new parsed content, this is mostly the case when working with quill extensions.
 + block element: Block elements which encloses the whole input with a tag, for example heading.
@@ -102,12 +88,12 @@ class Mention extends InlineListener
     public function process(Line $line)
     {
       // check if input is json, decodes to an array and checks if the key "mention" 
-      // exsts, if yes return the value for this key.
+      // exists, if yes return the value for this key.
       $mention = $line->insertJsonKey('mention');
       if ($mention) {
-            // use default inline behavior, updates the content and append to next "block" element.
-            // the value in this example would be "<mention>Basil</mention>".
-            $this->updateInput($line, '<mention>'.$mention['value'].'</mention>');
+            // apply the inline behavior, updates the content and append to next "block" element.
+            // the value in this example would be "<strong>Basil</strong>".
+            $this->updateInput($line, '<strong>'.$mention['value'].'</strong>');
     }
 }
 ```
@@ -120,9 +106,9 @@ $lexer->registerListener(new Mention);
 echo $lexer->render();
 ```
 
-## Overide built-in Listeners
+## Override built-in Listeners
 
-Certain listeners (image, video, color) produce a HTML output which maybe not suit your use case, so you have to the option to override the properties of those plugins, example with image tags:
+Certain listeners (image, video, color) produce a HTML output which maybe not suit your use case, so you have the option to override the properties of those plugins and re-register the Listener, here an example with the image tag:
 
 ```php
 $image = new Image();
@@ -146,7 +132,7 @@ $debug = new Debug($lexer);
 echo $debug->debugPrint();
 ```
 
-There is also a built in docker compose file which provides access to the output.php file. The output.php helps to directly write content with the quill editor while displaying what is rendered including all debug informations. In order to run this docker webserver execute the following command in the root directory of your clone:
+There is also a built in docker compose file which provides access to the output.php file. The output.php helps to directly write content with the quill editor while displaying what is rendered including all debug informations. In order to run this docker webserver execute the following command in the root directory of your git repository clone:
 
 ```sh
 docker-compose up

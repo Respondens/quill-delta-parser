@@ -4,12 +4,55 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.3.3
+## 2.7.0 (7. June 2021)
 
++ [#49](https://github.com/nadar/quill-delta-parser/issues/49) Added Code Block Listener, generates `<pre><code>...</code></pre>` enclosed output.
+
+## 2.6.1 (1. June 2021)
+
++ [#48](https://github.com/nadar/quill-delta-parser/pull/48) PHP 8 compatibility.
+
+## 2.6.0 (2. December 2020)
+
++ [#42](https://github.com/nadar/quill-delta-parser/pull/42) Added PHP 8 Support.
++ [#43](https://github.com/nadar/quill-delta-parser/pull/42) Moved CI from Travis to GitHub Actions. Added PHP 8 version in Test Scenario.
+
+## 2.5.0 (29. June 2020)
+
++ [#41](https://github.com/nadar/quill-delta-parser/pull/41) Add option to configure Embed Video `allow` option.
+
+## 2.4.0 (2. November 2019)
+
++ [#32](https://github.com/nadar/quill-delta-parser/pull/32) Added new `wrapElement` method to simplify building block listeners.
++ [#30](https://github.com/nadar/quill-delta-parser/issues/30) List opening tag process has been simplified in order to support single bullet lists.
++ [#31](https://github.com/nadar/quill-delta-parser/pull/31) Add support for align attribute.
+
+## 2.3.0 (23. October 2019)
+
++ Add override functionality to links, allowing to customise their wrapper.
+
+## 2.2.0 (17. October 2019)
+
++ Add inline element to handle script attribute.
+
+## 2.1.1 (2. September 2019)
+
++ [#25](https://github.com/nadar/quill-delta-parser/issues/25) Ensure that empty heading listeners won't destroy all upcoming elements.
+
+## 2.1.0 (24. August 2019)
+
++ [#23](https://github.com/nadar/quill-delta-parser/issues/23) Add inline element to handle font attribute.
+
+## 2.0.0 (10. July 2019)
+
+> This release contains breaks which might affect your application. Checkout the [upgrade document](UPGRADE.md) for more details.
+
++ [#18](https://github.com/nadar/quill-delta-parser/issues/18) Enable `escapeInput` option by default in order to increase security.
+
+## 1.3.2 (9. July 2019)
+
++ [#13](https://github.com/nadar/quill-delta-parser/pull/13) Fixed bug when lists are interrupted with block level elements (e.g. videos)
 + [#16](https://github.com/nadar/quill-delta-parser/issues/16) Fixed bug with sorting index of inline elements when using prepend.
-
-## 1.3.2 (3. July 2019)
-
 + [#15](https://github.com/nadar/quill-delta-parser/pull/15) Fixed bug when header contains (partial) formatting and line before header contains formatting
 
 ## 1.3.1 (6. June 2019)

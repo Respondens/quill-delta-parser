@@ -5,6 +5,7 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
+use nadar\quill\Pick;
 
 /**
  * Convert all the not done elements into paragraphs.
@@ -14,6 +15,8 @@ use nadar\quill\BlockListener;
  */
 class Text extends BlockListener
 {
+    const ATTRIBUTE_NAME = 'text';
+
     const CLOSEP = '</p>';
 
     const OPENP = '<p>';
@@ -48,7 +51,9 @@ class Text extends BlockListener
             if (!$pick->line->isDone() && !$pick->line->hasAttributes() && !$pick->line->isInline()) {
                 $pick->line->setDone();
 
+                /** @var Line $next */
                 $next = $pick->line->next();
+                /** @var Line $prev */
                 $prev = $pick->line->previous();
                 
                 $output = [];
@@ -61,14 +66,8 @@ class Text extends BlockListener
                 // write the actuall content of the element into the output
                 $output[] = $pick->line->isEmpty() ? self::LINEBREAK : $pick->line->renderPrepend() . $pick->line->getInput();
 
-                // if its open and we have a next element, and the next element is not an inline, we close!
-                if ($isOpen && ($next && !$next->isInline())) {
+                if ($isOpen && $this->shouldClose($pick)) {
                     $isOpen = $this->output($output, self::CLOSEP, false);
-
-                // if its open and we dont have a next element, its the end of the document! lets close this damn paragraph.
-                } elseif ($isOpen && !$next) {
-                    $isOpen = $this->output($output, self::CLOSEP, false);
-
                 // its open, but the previous element was already an inline element, so maybe we should close and the next element
                 // will take care of the "situation". But only if this current line also had an end new line element, otherwise
                 // repeated inline elements will close
@@ -107,5 +106,19 @@ class Text extends BlockListener
     {
         $output[] = $tag;
         return $openState;
+    }
+
+    /**
+     * @param Pick $pick
+     * @return bool
+     */
+    private function shouldClose(Pick $pick): bool
+    {
+        /** @var Line $next */
+        $next = $pick->line->next();
+        // if its open and we dont have a next element, its the end of the document! lets close this damn paragraph.
+        if (!$next) return true;
+        // if its open and we have a next element, and the next element is not an inline, we close!
+        return (!$next->isInline() && !$next->isTextOnly() && !$pick->line->isTextOnly());
     }
 }

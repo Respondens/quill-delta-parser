@@ -90,6 +90,9 @@ class Line
      * @var boolean Whether this line has a newline or not, this information is already provided by the lines to ops method.
      */
     protected $hasNewline;
+
+    /** @var boolean Whether this line used to have attributes but due to filtering now only consists of text */
+    protected $textOnly;
     
     /**
      * Constructor
@@ -109,6 +112,26 @@ class Line
         $this->hadEndNewline = $hadEndNewline;
         $this->hasNewline = $hasNewline;
     }
+
+    /**
+     * Whether the current line used to have attributes, which are stripped, thus turning it into a text-only insert
+     *
+     * @return bool
+     */
+    public function isTextOnly()
+    {
+        return $this->textOnly;
+    }
+
+    /**
+     * Setter method to mark the line as text-only - after stripping the unknown attributes off of it
+     */
+    public function setAsTextOnly()
+    {
+        $this->textOnly = true;
+    }
+
+
 
     /**
      * Whether the current line had a new line char or not, this is very important in terms of finding out wether its a block
@@ -222,7 +245,7 @@ class Line
      * ensure the correct index for the prepend element.
      * 
      * @param string $value The value to prepend.
-     * @param Line $line The line which does the prepend, this is used to ensure the correctly order index of the elements. {@since 1.3.3}
+     * @param Line $line The line which does the prepend, this is used to ensure the correctly order index of the elements. {@since 1.3.2}
      * @return void
      */
     public function addPrepend($value, Line $line)
@@ -438,7 +461,7 @@ class Line
      *
      * @return boolean
      */
-    public function isInline()
+    public function isInline(): bool
     {
         return $this->isInline;
     }

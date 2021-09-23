@@ -15,6 +15,8 @@ use nadar\quill\Lexer;
  */
 class Heading extends BlockListener
 {
+    const ATTRIBUTE_NAME = 'header';
+
     /**
      * @var array Supported header levels.
      * @since 1.2.0
@@ -26,7 +28,7 @@ class Heading extends BlockListener
      */
     public function process(Line $line)
     {
-        $heading = $line->getAttribute('header');
+        $heading = $line->getAttribute(self::ATTRIBUTE_NAME);
         if ($heading) {
             $this->pick($line, ['heading' => $heading]);
             $line->setDone();
@@ -45,22 +47,8 @@ class Heading extends BlockListener
                 // prevent html injection in case the attribute is user input
                 throw new Exception('An unknown heading level "' . $pick->heading . '" has been detected.');
             }
-
-            $first = $this->getFirstLine($pick);
-
-            // while from first to the pick line and store content in buffer
-            $buffer = null;
-            $first->while(function (&$index, Line $line) use (&$buffer, $pick) {
-                $index++;
-                $buffer .= $line->getInput();
-                $line->setDone();
-                if ($index == $pick->line->getIndex()) {
-                    return false;
-                }
-            });
-
-            $pick->line->output = '<h' . $pick->heading . '>' . $buffer . '</h' . $pick->heading . '>';
-            $pick->line->setDone();
         }
+        
+        $this->wrapElement('<h{heading}>{__buffer__}</h{heading}>', ['heading']);
     }
 }

@@ -13,19 +13,21 @@ use nadar\quill\InlineListener;
  */
 class Color extends InlineListener
 {
+    const ATTRIBUTE_NAME = 'color';
+
     /**
      * @var boolean If ignore is enabled, the colors won't apply. This can be use full if coloring is disabled in your quill editor
      * but people copy past content from somewhere else which will then generate the color attribute.
      */
     public $ignore = false;
-
+    
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        if ($color = $line->getAttribute('color')) {
-            $this->updateInput($line, $this->ignore ? $line->input : '<span style="color:' . $line->getLexer()->escape($color) . '">' . $line->getInput() . '</span>');
+        if (($color = $line->getAttribute(self::ATTRIBUTE_NAME))) {
+            $this->updateInput($line, $this->ignore ? $line->input : '<span style="color:'.$line->getLexer()->escape($color).'">'.$line->getInput().'</span>');
         }
     }
 }

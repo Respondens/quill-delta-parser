@@ -14,12 +14,14 @@ use nadar\quill\Lexer;
  */
 class Blockquote extends BlockListener
 {
+    const ATTRIBUTE_NAME = 'blockquote';
+
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        if ($line->getAttribute('blockquote')) {
+        if ($line->getAttribute(self::ATTRIBUTE_NAME)) {
             $this->pick($line);
             $line->setDone();
         }
@@ -30,19 +32,6 @@ class Blockquote extends BlockListener
      */
     public function render(Lexer $lexer)
     {
-        foreach ($this->picks() as $pick) {
-            // get all
-            $prev = $pick->line->previous(function (Line $line) {
-                if (!$line->isInline()) {
-                    return true;
-                }
-            });
-            // if there is no previous element, we take the same line element.
-            if (!$prev) {
-                $prev = $pick->line;
-            }
-            $pick->line->output = '<blockquote>' . $prev->getInput() . $pick->line->renderPrepend() . '</blockquote>';
-            $prev->setDone();
-        }
+        $this->wrapElement('<blockquote>{__buffer__}</blockquote>');
     }
 }

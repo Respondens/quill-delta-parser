@@ -16,84 +16,69 @@ class Line
      * @var integer The status of a line which is not picked or done, which is default.
      */
     const STATUS_CLEAN = 1;
-
     /**
      * @var integer The status of the line if its picked by a listenere.
      */
     const STATUS_PICKED = 2;
-
     /**
      * @var integer The status of the line if some of the listeneres marked this line as done.
      */
     const STATUS_DONE = 3;
-    
     /**
      * @var array An array with values which can be prependend to the actuall input string. This is mainly used if inline
      * elements are passed to the next "not" inline element.
      */
     public $prepend = [];
-
     /**
      * @var string The input string which is assigned from the line parser. This is the actual content of the line itself!
      * @deprecated Deprecated since 1.2.0 will be removed in 2.0 use getInput() instead.
      */
     public $input;
-
     /**
      * @var string The output is the value which will actually rendered by the lexer. So lines which directly write to the output
      * buffer needs to fill in this variable.
      */
     public $output;
-
     /**
      * @var integer Holds the current status of the line.
      */
     protected $status = 1;
-
     /**
      * @var integer The ID/Index/Row of the line
      */
     protected $index;
-    
     /**
      * @var array An array with all attributes which are assigned to this lines. attribute can be inline markers like
      * bold, italic, links and so on.
      */
     protected $attributes = [];
-
     /**
      * @var Lexer The lexer object in order to access other lines and elements.
      */
     protected $lexer;
-
     /**
      * @var boolean Whether the current line is handled as "inline-line" or not. Inline lines have different effects when parsing the
      * end output. For example those can be skipped as they usual prepend the input value into the next line.
      */
     protected $isInline = false;
-
     /**
      * @var boolean Whether the current line is already escaped by a listener. If this is false, the next listener should preferable do so.
      * If this is true, it should not be done again by a next listener.
      * @since 1.2.0
      */
     protected $isEscaped = false;
-
     /**
      * @var boolean As certain elements has an end of newline but those are removed within the lexer opt to line methods we remember
      * this information here. If true this element has an \n element which has been original removed from input (as lines are spliited into
      * new lines).
      */
     protected $hadEndNewline = false;
-
     /**
      * @var boolean Whether this line has a newline or not, this information is already provided by the lines to ops method.
      */
     protected $hasNewline;
-
     /** @var boolean Whether this line used to have attributes but due to filtering now only consists of text */
     protected $textOnly;
-    
     /**
      * Constructor
      *
@@ -112,7 +97,6 @@ class Line
         $this->hadEndNewline = $hadEndNewline;
         $this->hasNewline = $hasNewline;
     }
-
     /**
      * Whether the current line used to have attributes, which are stripped, thus turning it into a text-only insert
      *
@@ -122,7 +106,6 @@ class Line
     {
         return $this->textOnly;
     }
-
     /**
      * Setter method to mark the line as text-only - after stripping the unknown attributes off of it
      */
@@ -130,9 +113,6 @@ class Line
     {
         $this->textOnly = true;
     }
-
-
-
     /**
      * Whether the current line had a new line char or not, this is very important in terms of finding out wether its a block
      * element or inline element.
@@ -145,7 +125,6 @@ class Line
     {
         return $this->hasNewline;
     }
-
     /**
      * Whether this line as an end newline char or not.
      *
@@ -155,7 +134,6 @@ class Line
     {
         return $this->hadEndNewline;
     }
-
     /**
      * Whether this line is the first line or not.
      *
@@ -165,7 +143,6 @@ class Line
     {
         return $this->previous() === false;
     }
-
     /**
      * Get the Lexer
      *
@@ -176,7 +153,6 @@ class Line
     {
         return $this->lexer;
     }
-
     /**
      * Get the line's input in a safe way.
      *
@@ -190,10 +166,8 @@ class Line
         if ($this->isEscaped()) {
             return $this->input;
         }
-        
         return $this->lexer->escape($this->getUnsafeInput());
     }
-
     /**
      * Get the raw line's input, this might not be escaped for html context.
      *
@@ -206,7 +180,6 @@ class Line
     {
         return $this->input;
     }
-
     /**
      * Get the array with attributes, if any.
      *
@@ -216,7 +189,6 @@ class Line
     {
         return $this->attributes;
     }
-
     /**
      * Whether the current line has attribute informations or not.
      *
@@ -226,7 +198,6 @@ class Line
     {
         return !empty($this->attributes);
     }
-
     /**
      * Get the value for a given attribute name, if not exists return false.
      *
@@ -237,7 +208,6 @@ class Line
     {
         return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : false;
     }
-
     /**
      * Add a new value to the prepend array.
      *
@@ -252,7 +222,6 @@ class Line
     {
         $this->prepend[$line->getIndex()] = $value;
     }
-
     /**
      * Returns the string for the prepend values.
      *
@@ -263,7 +232,6 @@ class Line
         ksort($this->prepend);
         return implode("", array_unique($this->prepend));
     }
-
     /**
      * While trough lines forward or backwards define trough index until false is returned.
      *
@@ -300,19 +268,16 @@ class Line
         $i = $this->getIndex();
         while ($iterate) {
             $line = $this->lexer->getLine($i);
-
             if (!$line) {
                 $iterate = false;
                 return;
             }
             $iterate = call_user_func_array($condition, [&$i, $line]);
-
             if ($iterate !== false) {
                 $iterate = true;
             }
         }
     }
-
     /**
      * While loop down (to the next elements) until false is returend.
      *
@@ -325,13 +290,12 @@ class Line
     {
         $next = $this->next();
         if ($next) {
-            return $next->while(function (&$index, Line $line) use ($condition) {
+            return $next->while_php5(function (&$index, Line $line) use($condition) {
                 $index++;
                 return call_user_func($condition, $line);
             });
         }
     }
-    
     /**
      * While loop up (to the previous elements) until false is returend.
      *
@@ -344,14 +308,12 @@ class Line
     {
         $previous = $this->previous();
         if ($previous) {
-            return $previous->while(function (&$index, Line $line) use ($condition) {
+            return $previous->while_php5(function (&$index, Line $line) use($condition) {
                 $index--;
-
                 return call_user_func($condition, $line);
             });
         }
     }
-
     /**
      * Iteration helper the go forward and backward in lines.
      *
@@ -388,10 +350,8 @@ class Line
                 $iterate = false;
             }
         }
-
         return $response;
     }
-
     /**
      * Get the next element.
      *
@@ -415,12 +375,10 @@ class Line
         if ($fn === null) {
             return $this->lexer->getLine($this->index + 1);
         }
-
         return $this->iterate($this, function ($i) {
-            return $i+1;
+            return $i + 1;
         }, $fn);
     }
-
     /**
      * Get the previous line.
      *
@@ -442,12 +400,10 @@ class Line
         if ($fn === null) {
             return $this->lexer->getLine($this->index - 1);
         }
-
         return $this->iterate($this, function ($i) {
-            return $i-1;
+            return $i - 1;
         }, $fn);
     }
-
     /**
      * Setter method whether the current element is inline or not.
      */
@@ -455,17 +411,15 @@ class Line
     {
         $this->isInline = true;
     }
-
     /**
      * Whether current line is an inline line or not.
      *
      * @return boolean
      */
-    public function isInline(): bool
+    public function isInline()
     {
         return $this->isInline;
     }
-
     /**
      * Setter method whether the current line is escaped or not.
      *
@@ -475,7 +429,6 @@ class Line
     {
         $this->isEscaped = true;
     }
-
     /**
      * Whether the current line is escaped or not.
      *
@@ -486,7 +439,6 @@ class Line
     {
         return $this->isEscaped;
     }
-
     /**
      * Getter method for the index of the line.
      *
@@ -496,7 +448,6 @@ class Line
     {
         return $this->index;
     }
-    
     /**
      * Set this line as picked.
      */
@@ -504,7 +455,6 @@ class Line
     {
         $this->status = self::STATUS_PICKED;
     }
-
     /**
      * Whether current line is picked or not. If the line has been picked an is marked as
      * done, is picked will return false.
@@ -515,7 +465,6 @@ class Line
     {
         return $this->status == self::STATUS_PICKED;
     }
-
     /**
      * Mark this line as done.
      */
@@ -523,7 +472,6 @@ class Line
     {
         $this->status = self::STATUS_DONE;
     }
-
     /**
      * Whether this line is done or not.
      *
@@ -533,7 +481,6 @@ class Line
     {
         return $this->status == self::STATUS_DONE;
     }
-
     /**
      * Whether current line as empty content string or not.
      *
@@ -543,7 +490,6 @@ class Line
     {
         return $this->input == '' && empty($this->prepend);
     }
-
     /**
      * Some plugins have a json as insert value, in order to detected such values
      * you can use this method.
@@ -557,7 +503,6 @@ class Line
     {
         return Lexer::isJson($this->input);
     }
-
     /**
      * Returns the insert json as array.
      *
@@ -567,7 +512,6 @@ class Line
     {
         return Lexer::decodeJson($this->input);
     }
-
     /**
      * Check whether insert is json/array input. if yes return the requres key.
      *
@@ -579,14 +523,10 @@ class Line
         if (!$this->isJsonInsert()) {
             return false;
         }
-
         $insert = $this->getArrayInsert();
-
         return array_key_exists($key, $insert) ? $insert[$key] : false;
     }
-
     private $_debug = [];
-
     /**
      * Add debug message for this line if {{Lexer::$debug}} is enabled.
      *
@@ -599,14 +539,13 @@ class Line
             $this->_debug[] = $message;
         }
     }
-
     /**
      * Return an array with all debug informations
      *
      * @return array
      * @since 1.3.0
      */
-    public function getDebugInfo() : array
+    public function getDebugInfo()
     {
         return $this->_debug;
     }

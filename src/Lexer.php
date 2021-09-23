@@ -18,7 +18,6 @@ use nadar\quill\listener\Font;
 use nadar\quill\listener\Script;
 use nadar\quill\listener\Align;
 use nadar\quill\listener\CodeBlock;
-
 /**
  * Lexer Delta Parser.
  *
@@ -67,12 +66,10 @@ class Lexer
      * @since 1.3.1
      */
     const DELTA_EOL = "\n";
-
     /**
      * @var string An internal string for newlines, this makes it more easy to debug instead of using \n (newlines).
      */
     const NEWLINE_EXPRESSION = '<!-- <![CDATA[NEWLINE]]> -->';
-
     /**
      * @var boolean Whether input should be escaped by listeners when mixed with html elements.
      * Note that a specific listener can decide to not escape if their output should be raw html.
@@ -80,48 +77,32 @@ class Lexer
      * @since 1.2.0
      */
     public $escapeInput = true;
-
     /**
      * @var boolean These flags are used for escaping values for mixing with a html context.
      * @since 1.2.0
      */
-    public $escapeFlags = ENT_QUOTES|ENT_HTML5;
-
+    public $escapeFlags = ENT_QUOTES | ENT_HTML5;
     /**
      * @var boolean The encoding is used for escaping values for mixing with a html context.
      * @since 1.2.0
      */
     public $escapeEncoding = 'UTF-8';
-
     /**
      * @var boolean Whether debbuging is enabled or not. If enabled lines can contain debugInfo messages which can be retrieved with {{Debug}} class.
      */
     public $debug = false;
-
     /**
      * @var array|string The delta ops json as string or as already parsed array
      */
     protected $json;
-
     /**
      * @var array The listeners in a flat array
      */
     protected $listenerNames;
-
     /**
      * @var array The listeners grouped by type and priority.
      */
-    protected $listeners = [
-        Listener::TYPE_INLINE => [
-            Listener::PRIORITY_EARLY_BIRD => [],
-            Listener::PRIORITY_GARBAGE_COLLECTOR => [],
-        ],
-        Listener::TYPE_BLOCK => [
-            Listener::PRIORITY_EARLY_BIRD => [],
-            Listener::PRIORITY_GARBAGE_COLLECTOR => [],
-        ],
-    ];
-
+    protected $listeners = [Listener::TYPE_INLINE => [Listener::PRIORITY_EARLY_BIRD => [], Listener::PRIORITY_GARBAGE_COLLECTOR => []], Listener::TYPE_BLOCK => [Listener::PRIORITY_EARLY_BIRD => [], Listener::PRIORITY_GARBAGE_COLLECTOR => []]];
     /**
      * Initializer
      *
@@ -131,35 +112,32 @@ class Lexer
     public function __construct($json, $loadBuiltinListeneres = true)
     {
         $this->json = $json;
-
         if ($loadBuiltinListeneres) {
             $this->loadBuiltinListeneres();
         }
     }
-
     /**
      * Loads the library built in listeneres.
      */
     public function loadBuiltinListeneres()
     {
-        $this->registerListener(new Bold);
-        $this->registerListener(new Italic);
-        $this->registerListener(new Color);
-        $this->registerListener(new Link);
-        $this->registerListener(new Video);
-        $this->registerListener(new Image);
-        $this->registerListener(new Strike);
-        $this->registerListener(new Underline);
-        $this->registerListener(new Heading);
-        $this->registerListener(new CodeBlock);
-        $this->registerListener(new Text);
-        $this->registerListener(new Lists);
-        $this->registerListener(new Blockquote);
-        $this->registerListener(new Font);
-        $this->registerListener(new Script);
-        $this->registerListener(new Align);
+        $this->registerListener(new Bold());
+        $this->registerListener(new Italic());
+        $this->registerListener(new Color());
+        $this->registerListener(new Link());
+        $this->registerListener(new Video());
+        $this->registerListener(new Image());
+        $this->registerListener(new Strike());
+        $this->registerListener(new Underline());
+        $this->registerListener(new Heading());
+        $this->registerListener(new CodeBlock());
+        $this->registerListener(new Text());
+        $this->registerListener(new Lists());
+        $this->registerListener(new Blockquote());
+        $this->registerListener(new Font());
+        $this->registerListener(new Script());
+        $this->registerListener(new Align());
     }
-
     /**
      * Register a new listenere.
      *
@@ -170,27 +148,24 @@ class Lexer
         $this->listeners[$listener->type()][$listener->priority()][get_class($listener)] = $listener;
         $this->listenerNames[] = $listener::ATTRIBUTE_NAME;
     }
-
     /**
      * Get the input json as array.
      *
      * @return array The json as array formated.
      */
-    public function getJsonArray() : array
+    public function getJsonArray()
     {
         return is_array($this->json) ? $this->json : self::decodeJson($this->json);
     }
-
     /**
      * Get the ops section from the json otherwise json array.
      *
      * @return array
      */
-    public function getOps() : array
+    public function getOps()
     {
         return isset($this->getJsonArray()['ops']) ? $this->getJsonArray()['ops'] : $this->getJsonArray();
     }
-
     /**
      * Get the line object for a given id/row/index.
      *
@@ -201,17 +176,14 @@ class Lexer
     {
         return isset($this->_lines[$index]) ? $this->_lines[$index] : false;
     }
-
     /**
      * @return array Returns an array with all line objects.
      */
-    public function getLines() : array
+    public function getLines()
     {
         return $this->_lines;
     }
-
     private $_lines = [];
-
     /**
      * Convert the arrray operations array into lines
      *
@@ -234,8 +206,7 @@ class Lexer
                 // remove the last newline from the line, as it will be splited into lines anyhow.
                 $line = $this->removeLastNewline($insert);
                 // check if the original input was changed, in order to determine whether current line had new line char.
-                $hasEndNewline = ($line !== $insert);
-
+                $hasEndNewline = $line !== $insert;
                 // check if original insert string has a new line char in the string
                 $hasNewline = $this->lineHasNewline($insert);
                 // split the input string into parts / lines.
@@ -243,30 +214,24 @@ class Lexer
                 $count = count($parts);
                 foreach ($parts as $index => $value) {
                     // check if this line had the end newline
-                    $isLast = ($index + 1) == $count;
+                    $isLast = $index + 1 == $count;
                     $hadEndNewline = $isLast && $hasEndNewline ? true : false;
                     if ($hasNewline && $isLast && !$hasEndNewline) {
                         $hasNewline = false;
                     }
-
                     $filteredDeltaAttributes = $this->filterUnknownAttributesFromDelta($delta);
-
                     $newLine = new Line($i, $value, $filteredDeltaAttributes, $this, $hadEndNewline, $hasNewline);
-
                     // If the line had unregistered attributes it needs to know it is a text-only
                     if (isset($delta['attributes']) && count($filteredDeltaAttributes) === 0) {
                         $newLine->setAsTextOnly();
                     }
-
                     $lines[$i] = $newLine;
                     $i++;
                 }
             }
         }
-
         return $lines;
     }
-
     /**
      * Whether the current line as a newline char.
      *
@@ -275,9 +240,8 @@ class Lexer
      */
     protected function lineHasNewline($input)
     {
-        return (strpos($input, self::NEWLINE_EXPRESSION) !== false) ? true : false;
+        return strpos($input, self::NEWLINE_EXPRESSION) !== false ? true : false;
     }
-
     /**
      * Replace new lines with an internal representation that aids debugging
      *
@@ -288,7 +252,6 @@ class Lexer
     {
         return is_array($input) ? $input : str_replace(self::DELTA_EOL, self::NEWLINE_EXPRESSION, $input);
     }
-
     /**
      * Normamlize the insert values into json
      *
@@ -303,10 +266,8 @@ class Lexer
             // convert the array into a json string
             return json_encode($insert);
         }
-
         return $insert;
     }
-
     /**
      * Undocumented function
      *
@@ -321,10 +282,8 @@ class Lexer
         if (substr($insert, -$expLength) == self::NEWLINE_EXPRESSION) {
             return substr($insert, 0, -$expLength);
         }
-
         return $insert;
     }
-
     /**
      * Undocumented function
      *
@@ -340,7 +299,6 @@ class Lexer
             }
         }
     }
-
     /**
      * Undocumented function
      *
@@ -355,7 +313,6 @@ class Lexer
             }
         }
     }
-
     /**
      * Renders the current delta into a html string.
      *
@@ -364,23 +321,18 @@ class Lexer
     public function render()
     {
         $this->_lines = $this->opsToLines($this->getOps());
-
         foreach ($this->_lines as $line) {
             $this->processListeners($line, Listener::TYPE_INLINE);
             $this->processListeners($line, Listener::TYPE_BLOCK);
         }
-
         $this->renderListeneres(Listener::TYPE_INLINE);
         $this->renderListeneres(Listener::TYPE_BLOCK);
-
         $buff = null;
         foreach ($this->_lines as $line) {
-            $buff.= $line->output;
+            $buff .= $line->output;
         }
-
         return $buff;
     }
-
     /**
      * Checks if a string is a json or not.
      *
@@ -401,18 +353,13 @@ class Lexer
         if (!is_scalar($value)) {
             return false;
         }
-        
         $firstChar = substr($value, 0, 1);
-        
         if ($firstChar !== '{' && $firstChar !== '[') {
             return false;
         }
-        
         $json_check = json_decode($value);
-        
         return json_last_error() === JSON_ERROR_NONE;
     }
-
     /**
      * Decode a given json string into a php array.
      *
@@ -423,7 +370,6 @@ class Lexer
     {
         return json_decode($json, true);
     }
-
     /**
      * Escape plain text output before mixing in a html context.
      *
@@ -440,10 +386,8 @@ class Lexer
         if (!$this->escapeInput) {
             return $value;
         }
-        
         return htmlspecialchars($value, $this->escapeFlags, $this->escapeEncoding, $double = false);
     }
-
     /**
      * This method filters unrecognised attributes from the delta
      *
@@ -451,17 +395,15 @@ class Lexer
      */
     private function filterUnknownAttributesFromDelta($delta)
     {
-        if(!isset($delta['attributes'])) {
+        if (!isset($delta['attributes'])) {
             return [];
         }
-
         $attributes = [];
         foreach ($delta['attributes'] as $attribute => $value) {
-            if(in_array($attribute, $this->listenerNames, true)) {
+            if (in_array($attribute, $this->listenerNames, true)) {
                 $attributes[$attribute] = $value;
             }
         }
-
         return $attributes;
     }
 }

@@ -3,7 +3,6 @@
 namespace nadar\quill;
 
 use Exception;
-
 /**
  * Inline Listenere.
  *
@@ -21,7 +20,6 @@ abstract class InlineListener extends Listener
     {
         return self::TYPE_INLINE;
     }
-
     /**
      * A short hand method for handling inline elements.
      *
@@ -42,7 +40,6 @@ abstract class InlineListener extends Listener
         $line->setAsEscaped();
         $this->pick($line);
     }
-
     /**
      * {@inheritDoc}
      */

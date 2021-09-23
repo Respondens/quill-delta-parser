@@ -5,7 +5,6 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\InlineListener;
 use nadar\quill\Lexer;
-
 /**
  * Convert links into a inline elements.
  *
@@ -15,13 +14,11 @@ use nadar\quill\Lexer;
 class Link extends InlineListener
 {
     const ATTRIBUTE_NAME = 'link';
-
     /**
      * @var string The wrapper template which is used to generate the link tag
      * @since 2.3.0
      */
     public $wrapper = '<a href="{link}" target="_blank">{text}</a>';
-
     /**
      * {@inheritDoc}
      */

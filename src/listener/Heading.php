@@ -6,7 +6,6 @@ use Exception;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
 use nadar\quill\Lexer;
-
 /**
  * Convert header into heading elements.
  *
@@ -16,13 +15,11 @@ use nadar\quill\Lexer;
 class Heading extends BlockListener
 {
     const ATTRIBUTE_NAME = 'header';
-
     /**
      * @var array Supported header levels.
      * @since 1.2.0
      */
     public $levels = [1, 2, 3, 4, 5, 6];
-
     /**
      * {@inheritDoc}
      */
@@ -34,7 +31,6 @@ class Heading extends BlockListener
             $line->setDone();
         }
     }
-
     /**
      * {@inheritDoc}
      *
@@ -48,7 +44,6 @@ class Heading extends BlockListener
                 throw new Exception('An unknown heading level "' . $pick->heading . '" has been detected.');
             }
         }
-        
         $this->wrapElement('<h{heading}>{__buffer__}</h{heading}>', ['heading']);
     }
 }

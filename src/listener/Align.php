@@ -6,7 +6,6 @@ use Exception;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
 use nadar\quill\Lexer;
-
 /**
  * Convert align attributes into p tags with text-align css applied.
  *
@@ -19,7 +18,6 @@ class Align extends BlockListener
      * @var array Supported alignments.
      */
     public $alignments = ['center', 'right', 'justify'];
-
     /**
      * {@inheritDoc}
      */
@@ -31,7 +29,6 @@ class Align extends BlockListener
             $line->setDone();
         }
     }
-
     /**
      * {@inheritDoc}
      *
@@ -44,9 +41,7 @@ class Align extends BlockListener
                 // prevent html injection in case the attribute is user input
                 throw new Exception('An unknown alignment "' . $pick->alignment . '" has been detected.');
             }
-
         }
-
         $this->wrapElement('<p style="text-align: {alignment};">{__buffer__}</p>', ['alignment']);
     }
 }

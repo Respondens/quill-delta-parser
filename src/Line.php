@@ -275,7 +275,7 @@ class Line
      * ```php
      * $buffer = null;
      *
-     * $line->while(function (&$index, Line $line) use (&$buffer) {
+     * $line->while_php5(function (&$index, Line $line) use (&$buffer) {
      *     $index++;
      *     $buffer.= $line->input;
      *
@@ -293,7 +293,7 @@ class Line
      * second is the current line.
      * @return void
      */
-    public function while(callable $condition)
+    public function while_php5(callable $condition)
     {
         $iterate = true;
         $i = $this->getIndex();

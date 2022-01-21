@@ -57,6 +57,7 @@ class LineTest extends TestCase
         $line1 = null;
         $line0->whileNext(function ($line) use (&$line1) {
             $line1 = $line;
+
             return false;
         });
         
@@ -68,6 +69,7 @@ class LineTest extends TestCase
         $prevLine = null;
         $line1->whilePrevious(function ($line) use (&$prevLine) {
             $prevLine = $line;
+
             return false;
         });
 

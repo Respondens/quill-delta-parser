@@ -25,6 +25,7 @@ class Debug
      * @var Lexer
      */
     public $lexer;
+
     /**
      * Debug constructor
      *
@@ -34,6 +35,7 @@ class Debug
     {
         $this->lexer = $lexer;
     }
+
     /**
      * Get an array of lines which does not have status done.
      *
@@ -42,13 +44,16 @@ class Debug
     protected function getNotDoneLines()
     {
         $lines = [];
+
         foreach ($this->lexer->getLines() as $line) {
             if (!$line->isDone()) {
                 $lines[] = $line;
             }
         }
+
         return $lines;
     }
+
     /**
      * Get an array of lines which does not have the status picked
      *
@@ -57,13 +62,16 @@ class Debug
     protected function getNotPickedLines()
     {
         $lines = [];
+
         foreach ($this->lexer->getLines() as $line) {
             if (!$line->isPicked() && !$line->isDone()) {
                 $lines[] = $line;
             }
         }
+
         return $lines;
     }
+
     /**
      * return a string with debug informations.
      *
@@ -77,8 +85,10 @@ class Debug
         $d .= $this->getLinesTable($this->getNotDoneLines());
         $d .= "<p><b>LINE BY LINE</b></p>";
         $d .= $this->getLinesTable($this->lexer->getLines());
+
         return nl2br($d);
     }
+
     /**
      * Get an array with alles lines rendered a string
      *
@@ -88,11 +98,14 @@ class Debug
     public function getLinesTable(array $lines)
     {
         $_lines = [];
+
         foreach ($lines as $line) {
             $_lines[] = [$line->getIndex(), htmlentities($line->input, ENT_QUOTES), htmlentities($line->output, ENT_QUOTES), htmlentities($line->renderPrepend(), ENT_QUOTES), implode(", ", $line->getDebugInfo()), var_export($line->getAttributes(), true), var_export($line->isInline(), true), $this->lineStatus($line), var_export($line->hasEndNewline(), true), var_export($line->hasNewline(), true), var_export($line->isEmpty(), true)];
         }
+
         return $this->renderTable($_lines, ['ID', 'input', 'output', 'prepend', 'debug', 'attributes', 'is inline', 'status', 'has end newline', 'has new line', 'is empty']);
     }
+
     /**
      * Get the status waterfall of a given line
      *
@@ -107,6 +120,7 @@ class Debug
             return 'Picked';
         }
     }
+
     /**
      * Render the given table line by line
      *
@@ -119,18 +133,22 @@ class Debug
         $buffer = '<table class="table table-bordered table-striped table-hover table-sm small" border="1" width="100%" cellpadding="3" cellspacing="0">';
         if (!empty($head)) {
             $buffer .= '<thead><tr>';
+
             foreach ($head as $col) {
                 $buffer .= '<td><b>' . $col . '</b></td>';
             }
             $buffer .= '</tr></thead>';
         }
+
         foreach ($rows as $cols) {
             $buffer .= '<tr onclick="this.style.backgroundColor=(this.style.backgroundColor==\'red\')?(\'transparent\'):(\'red\');">';
+
             foreach ($cols as $col) {
                 $buffer .= '<td>' . $col . '</td>';
             }
             $buffer .= '</tr>';
         }
+
         return $buffer . '</table>';
     }
 }

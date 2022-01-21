@@ -5,6 +5,7 @@ namespace nadar\quill\listener;
 use nadar\quill\InlineListener;
 use nadar\quill\Line;
 use nadar\quill\Lexer;
+
 /**
  * Mention Quill Plugin Listener.
  *
@@ -20,6 +21,7 @@ use nadar\quill\Lexer;
 class Mention extends InlineListener
 {
     const ATTRIBUTE_NAME = 'mention';
+
     /**
      * {@inheritDoc}
      */

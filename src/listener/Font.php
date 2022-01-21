@@ -4,6 +4,7 @@ namespace nadar\quill\listener;
 
 use nadar\quill\InlineListener;
 use nadar\quill\Line;
+
 /**
  * Renders font attribute which will set font-family.
  * 
@@ -17,6 +18,7 @@ class Font extends InlineListener
      * but people copy past content from somewhere else which will then generate the font attribute.
      */
     public $ignore = false;
+
     /**
      * {@inheritDoc}
      */
@@ -26,6 +28,7 @@ class Font extends InlineListener
             $this->updateInput($line, $this->applyTemplate($font, $line));
         }
     }
+
     /**
      * Wrap the font family span tag if ignore is disabled.
      *
@@ -38,6 +41,7 @@ class Font extends InlineListener
         if ($this->ignore) {
             return $line->input;
         }
+
         return '<span style="font-family: ' . $line->getLexer()->escape($font) . ';">' . $line->input . '</span>';
     }
 }

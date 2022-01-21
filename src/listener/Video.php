@@ -5,6 +5,7 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
+
 /**
  * Convert Video attributes into tags.
  *
@@ -14,15 +15,18 @@ use nadar\quill\BlockListener;
 class Video extends BlockListener
 {
     const ATTRIBUTE_NAME = 'video';
+
     /**
      * @var array Allow options for iframe allow param
      * @since 2.5.0
      */
     public $allow = ['accelerometer', 'autoplay', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
+
     /**
      * @var string The wrapper template which is taken to generate the video element.
      */
     public $wrapper = '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="{url}" frameborder="0" allow="{allow}" allowfullscreen></iframe></div>';
+
     /**
      * {@inheritDoc}
      */

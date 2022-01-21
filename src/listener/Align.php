@@ -6,6 +6,7 @@ use Exception;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
 use nadar\quill\Lexer;
+
 /**
  * Convert align attributes into p tags with text-align css applied.
  *
@@ -18,6 +19,7 @@ class Align extends BlockListener
      * @var array Supported alignments.
      */
     public $alignments = ['center', 'right', 'justify'];
+
     /**
      * {@inheritDoc}
      */
@@ -29,6 +31,7 @@ class Align extends BlockListener
             $line->setDone();
         }
     }
+
     /**
      * {@inheritDoc}
      *

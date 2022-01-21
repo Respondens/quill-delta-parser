@@ -18,6 +18,7 @@ use nadar\quill\listener\Font;
 use nadar\quill\listener\Script;
 use nadar\quill\listener\Align;
 use nadar\quill\listener\CodeBlock;
+
 /**
  * Lexer Delta Parser.
  *
@@ -66,10 +67,12 @@ class Lexer
      * @since 1.3.1
      */
     const DELTA_EOL = "\n";
+
     /**
      * @var string An internal string for newlines, this makes it more easy to debug instead of using \n (newlines).
      */
     const NEWLINE_EXPRESSION = '<!-- <![CDATA[NEWLINE]]> -->';
+
     /**
      * @var boolean Whether input should be escaped by listeners when mixed with html elements.
      * Note that a specific listener can decide to not escape if their output should be raw html.
@@ -77,32 +80,34 @@ class Lexer
      * @since 1.2.0
      */
     public $escapeInput = true;
+
     /**
      * @var boolean These flags are used for escaping values for mixing with a html context.
      * @since 1.2.0
      */
     public $escapeFlags = ENT_QUOTES | ENT_HTML5;
+
     /**
      * @var boolean The encoding is used for escaping values for mixing with a html context.
      * @since 1.2.0
      */
     public $escapeEncoding = 'UTF-8';
+
     /**
      * @var boolean Whether debbuging is enabled or not. If enabled lines can contain debugInfo messages which can be retrieved with {{Debug}} class.
      */
     public $debug = false;
+
     /**
      * @var array|string The delta ops json as string or as already parsed array
      */
     protected $json;
+
     /**
-     * @var array The listeners in a flat array
-     */
-    protected $listenerNames;
-    /**
-     * @var array The listeners grouped by type and priority.
+     * @var array The listeneres grouped by type and priority.
      */
     protected $listeners = [Listener::TYPE_INLINE => [Listener::PRIORITY_EARLY_BIRD => [], Listener::PRIORITY_GARBAGE_COLLECTOR => []], Listener::TYPE_BLOCK => [Listener::PRIORITY_EARLY_BIRD => [], Listener::PRIORITY_GARBAGE_COLLECTOR => []]];
+
     /**
      * Initializer
      *
@@ -116,17 +121,18 @@ class Lexer
             $this->loadBuiltinListeneres();
         }
     }
+
     /**
      * Loads the library built in listeneres.
      */
     public function loadBuiltinListeneres()
     {
+        $this->registerListener(new Image());
         $this->registerListener(new Bold());
         $this->registerListener(new Italic());
         $this->registerListener(new Color());
         $this->registerListener(new Link());
         $this->registerListener(new Video());
-        $this->registerListener(new Image());
         $this->registerListener(new Strike());
         $this->registerListener(new Underline());
         $this->registerListener(new Heading());
@@ -138,6 +144,7 @@ class Lexer
         $this->registerListener(new Script());
         $this->registerListener(new Align());
     }
+
     /**
      * Register a new listenere.
      *
@@ -146,8 +153,8 @@ class Lexer
     public function registerListener(Listener $listener)
     {
         $this->listeners[$listener->type()][$listener->priority()][get_class($listener)] = $listener;
-        $this->listenerNames[] = $listener::ATTRIBUTE_NAME;
     }
+
     /**
      * Get the input json as array.
      *
@@ -157,6 +164,7 @@ class Lexer
     {
         return is_array($this->json) ? $this->json : self::decodeJson($this->json);
     }
+
     /**
      * Get the ops section from the json otherwise json array.
      *
@@ -166,6 +174,7 @@ class Lexer
     {
         return isset($this->getJsonArray()['ops']) ? $this->getJsonArray()['ops'] : $this->getJsonArray();
     }
+
     /**
      * Get the line object for a given id/row/index.
      *
@@ -176,6 +185,7 @@ class Lexer
     {
         return isset($this->_lines[$index]) ? $this->_lines[$index] : false;
     }
+
     /**
      * @return array Returns an array with all line objects.
      */
@@ -183,7 +193,9 @@ class Lexer
     {
         return $this->_lines;
     }
+
     private $_lines = [];
+
     /**
      * Convert the arrray operations array into lines
      *
@@ -194,6 +206,7 @@ class Lexer
     {
         $lines = [];
         $i = 0;
+
         foreach ($ops as $delta) {
             // replace newline chars with internal expression
             $insert = $this->replaceNewlineWithExpression($delta['insert']);
@@ -212,6 +225,7 @@ class Lexer
                 // split the input string into parts / lines.
                 $parts = explode(self::NEWLINE_EXPRESSION, $line);
                 $count = count($parts);
+
                 foreach ($parts as $index => $value) {
                     // check if this line had the end newline
                     $isLast = $index + 1 == $count;
@@ -219,19 +233,15 @@ class Lexer
                     if ($hasNewline && $isLast && !$hasEndNewline) {
                         $hasNewline = false;
                     }
-                    $filteredDeltaAttributes = $this->filterUnknownAttributesFromDelta($delta);
-                    $newLine = new Line($i, $value, $filteredDeltaAttributes, $this, $hadEndNewline, $hasNewline);
-                    // If the line had unregistered attributes it needs to know it is a text-only
-                    if (isset($delta['attributes']) && count($filteredDeltaAttributes) === 0) {
-                        $newLine->setAsTextOnly();
-                    }
-                    $lines[$i] = $newLine;
+                    $lines[$i] = new Line($i, $value, isset($delta['attributes']) ? $delta['attributes'] : [], $this, $hadEndNewline, $hasNewline);
                     $i++;
                 }
             }
         }
+
         return $lines;
     }
+
     /**
      * Whether the current line as a newline char.
      *
@@ -242,6 +252,7 @@ class Lexer
     {
         return strpos($input, self::NEWLINE_EXPRESSION) !== false ? true : false;
     }
+
     /**
      * Replace new lines with an internal representation that aids debugging
      *
@@ -252,6 +263,7 @@ class Lexer
     {
         return is_array($input) ? $input : str_replace(self::DELTA_EOL, self::NEWLINE_EXPRESSION, $input);
     }
+
     /**
      * Normamlize the insert values into json
      *
@@ -266,8 +278,10 @@ class Lexer
             // convert the array into a json string
             return json_encode($insert);
         }
+
         return $insert;
     }
+
     /**
      * Undocumented function
      *
@@ -282,8 +296,10 @@ class Lexer
         if (substr($insert, -$expLength) == self::NEWLINE_EXPRESSION) {
             return substr($insert, 0, -$expLength);
         }
+
         return $insert;
     }
+
     /**
      * Undocumented function
      *
@@ -299,6 +315,7 @@ class Lexer
             }
         }
     }
+
     /**
      * Undocumented function
      *
@@ -313,6 +330,7 @@ class Lexer
             }
         }
     }
+
     /**
      * Renders the current delta into a html string.
      *
@@ -321,6 +339,7 @@ class Lexer
     public function render()
     {
         $this->_lines = $this->opsToLines($this->getOps());
+
         foreach ($this->_lines as $line) {
             $this->processListeners($line, Listener::TYPE_INLINE);
             $this->processListeners($line, Listener::TYPE_BLOCK);
@@ -328,11 +347,14 @@ class Lexer
         $this->renderListeneres(Listener::TYPE_INLINE);
         $this->renderListeneres(Listener::TYPE_BLOCK);
         $buff = null;
+
         foreach ($this->_lines as $line) {
             $buff .= $line->output;
         }
+
         return $buff;
     }
+
     /**
      * Checks if a string is a json or not.
      *
@@ -358,8 +380,10 @@ class Lexer
             return false;
         }
         $json_check = json_decode($value);
+
         return json_last_error() === JSON_ERROR_NONE;
     }
+
     /**
      * Decode a given json string into a php array.
      *
@@ -370,6 +394,7 @@ class Lexer
     {
         return json_decode($json, true);
     }
+
     /**
      * Escape plain text output before mixing in a html context.
      *
@@ -386,24 +411,7 @@ class Lexer
         if (!$this->escapeInput) {
             return $value;
         }
+
         return htmlspecialchars($value, $this->escapeFlags, $this->escapeEncoding, $double = false);
-    }
-    /**
-     * This method filters unrecognised attributes from the delta
-     *
-     * @return array with attributes which are registered
-     */
-    private function filterUnknownAttributesFromDelta($delta)
-    {
-        if (!isset($delta['attributes'])) {
-            return [];
-        }
-        $attributes = [];
-        foreach ($delta['attributes'] as $attribute => $value) {
-            if (in_array($attribute, $this->listenerNames, true)) {
-                $attributes[$attribute] = $value;
-            }
-        }
-        return $attributes;
     }
 }

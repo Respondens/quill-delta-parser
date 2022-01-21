@@ -5,6 +5,7 @@ namespace nadar\quill\listener;
 use nadar\quill\Line;
 use nadar\quill\BlockListener;
 use nadar\quill\Lexer;
+
 /**
  * Code Block
  *
@@ -24,6 +25,7 @@ class CodeBlock extends BlockListener
             $line->setDone();
         }
     }
+
     /**
      * {@inheritDoc}
      */

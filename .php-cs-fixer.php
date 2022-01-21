@@ -1,12 +1,13 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
+    ->exclude('somedir')
     ->notPath('src/Symfony/Component/Translation/Tests/fixtures/resources.php')
-    ->in(__DIR__.DIRECTORY_SEPARATOR."src")
+    ->in(__DIR__)
 ;
 
-return PhpCsFixer\Config::create()
-    ->setRules([
+$config = new PhpCsFixer\Config();
+return $config->setRules([
         'line_ending' => true,
         'single_blank_line_at_eof' => true,
         'class_attributes_separation' => true,

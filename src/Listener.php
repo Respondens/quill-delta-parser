@@ -17,27 +17,33 @@ abstract class Listener
      * @var integer Type inline listener
      */
     const TYPE_INLINE = 1;
+
     /**
      * @var integer Type block listener
      */
     const TYPE_BLOCK = 2;
+
     /**
      * @var integer First priority listener within the given type
      */
     const PRIORITY_EARLY_BIRD = 1;
+
     /**
      * @var integer Second priority listener within the given type. This is currently only used
      * for TEXT listeneres - as they need to be the very last entry.
      */
     const PRIORITY_GARBAGE_COLLECTOR = 2;
+
     /** @var string by which matches with the attribute on the ops */
     const ATTRIBUTE_NAME = null;
+
     /**
      * Undocumented function
      *
      * @return integer
      */
     public abstract function type();
+
     /**
      * Undocumented function
      *
@@ -45,6 +51,7 @@ abstract class Listener
      * @return void
      */
     public abstract function process(Line $line);
+
     /**
      * Undocumented function
      *
@@ -54,7 +61,9 @@ abstract class Listener
     {
         return self::PRIORITY_EARLY_BIRD;
     }
+
     private $_picks = [];
+
     /**
      * Pick a certain line during the process() process in order to use them later in render method.
      *
@@ -69,6 +78,7 @@ abstract class Listener
         $line->debugInfo('picked by ' . get_called_class());
         $this->_picks[] = new Pick($this, $line, $options, count($this->_picks));
     }
+
     /**
      * Returns an array with all picked lineds.
      *
@@ -78,6 +88,7 @@ abstract class Listener
     {
         return $this->_picks;
     }
+
     /**
      * The render metho is processed after the process() method is done.
      *

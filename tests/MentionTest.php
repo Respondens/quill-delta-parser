@@ -15,6 +15,7 @@ class MentionTest extends DeltaTestCase
   {"attributes":{"bold":true},"insert":"Jane"},
   {"insert":"!\n"}]}
 JSON;
+
     public $html = <<<'EOT'
 <p>Hello John!</p>
 <p><br></p>

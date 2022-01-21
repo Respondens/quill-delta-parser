@@ -19,6 +19,7 @@ abstract class BlockListener extends Listener
     {
         return self::TYPE_BLOCK;
     }
+
     /**
      * Generate a rendered output from the current picks with a custom Wrapper Template.
      *
@@ -60,9 +61,11 @@ abstract class BlockListener extends Listener
     protected function wrapElement($wrapper, array $options = [])
     {
         $search = ['{__buffer__}'];
+
         foreach ($options as $key => $value) {
             $search[] = is_integer($key) ? '{' . $value . '}' : '{' . $key . '}';
         }
+
         foreach ($this->picks() as $pick) {
             $first = $this->getFirstLine($pick);
             // while from first to the pick line and store content in buffer
@@ -77,6 +80,7 @@ abstract class BlockListener extends Listener
                 }
             });
             $replace = [$buffer];
+
             foreach ($options as $key => $value) {
                 $name = is_integer($key) ? $value : $key;
                 $content = $pick->{$name};
@@ -87,6 +91,7 @@ abstract class BlockListener extends Listener
             $pick->line->setDone();
         }
     }
+
     /**
      * Returns the first Line from a Pick. If the Pick is the first Line, it will return it's own pick
      * This is done because blockItems can consist of multiple inline items
@@ -108,8 +113,10 @@ abstract class BlockListener extends Listener
             }
             // assign the line to $first
             $first = $line;
+
             return true;
         });
+
         return $first;
     }
 }

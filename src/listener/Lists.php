@@ -7,6 +7,7 @@ use nadar\quill\Line;
 use nadar\quill\Lexer;
 use nadar\quill\BlockListener;
 use nadar\quill\Pick;
+
 /**
  * Convert List elements (ul, ol) into Block element.
  *
@@ -15,20 +16,24 @@ use nadar\quill\Pick;
  */
 class Lists extends BlockListener
 {
-    const ATTRIBUTE_NAME = 'list';
+    const ATTRIBUTE_LIST = 'list';
+
     const LIST_TYPE_BULLET = 'bullet';
+
     const LIST_TYPE_ORDERED = 'ordered';
+
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        $listType = $line->getAttribute(self::ATTRIBUTE_NAME);
+        $listType = $line->getAttribute(self::ATTRIBUTE_LIST);
         if ($listType) {
             $this->pick($line, ['type' => $listType]);
             $line->setDone();
         }
     }
+
     /**
      * {@inheritDoc}
      */
@@ -36,11 +41,12 @@ class Lists extends BlockListener
     {
         $isOpen = false;
         $listTag = null;
+
         foreach ($this->picks() as $pick) {
             $first = $this->getFirstLine($pick);
             // while from first to the pick line and store content in buffer
             $buffer = null;
-            $first->while_php5(function (&$index, Line $line) use(&$buffer, $pick) {
+            $first->while(function (&$index, Line $line) use(&$buffer, $pick) {
                 $index++;
                 $buffer .= $line->getInput();
                 $line->setDone();
@@ -54,7 +60,7 @@ class Lists extends BlockListener
             $hasNextInside = false;
             $pick->line->whileNext(function (Line $line) use(&$hasNextInside) {
                 // we found the next list elemnt, stop thie while loop
-                if ($line->getAttribute(self::ATTRIBUTE_NAME)) {
+                if ($line->getAttribute(self::ATTRIBUTE_LIST)) {
                     return false;
                 }
                 // if one of those new lines contains a endnew line or newline or is block level store this information
@@ -95,6 +101,7 @@ class Lists extends BlockListener
             $pick->line->setDone();
         }
     }
+
     /**
      * Get the html tag for the given value.
      *
@@ -104,13 +111,14 @@ class Lists extends BlockListener
      */
     protected function getListAttribute(Pick $pick)
     {
-        if ($pick->type == self::LIST_TYPE_ORDERED) {
+        $type = is_array($pick->type) ? $pick->type['type'] : $pick->type;
+        if ($type === self::LIST_TYPE_ORDERED) {
             return 'ol';
         }
-        if ($pick->type == self::LIST_TYPE_BULLET) {
+        if ($type === self::LIST_TYPE_BULLET) {
             return 'ul';
         }
         // prevent html injection in case the attribute is user input
-        throw new Exception('The provided list type "' . $pick->type . '" is not a known list type (ordered or bullet).');
+        throw new Exception('The provided list type "' . $type . '" is not a known list type (ordered or bullet).');
     }
 }

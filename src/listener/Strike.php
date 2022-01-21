@@ -4,6 +4,7 @@ namespace nadar\quill\listener;
 
 use nadar\quill\InlineListener;
 use nadar\quill\Line;
+
 /**
  * Process strike elements
  *
@@ -13,6 +14,7 @@ use nadar\quill\Line;
 class Strike extends InlineListener
 {
     const ATTRIBUTE_NAME = 'strike';
+
     /**
      * {@inheritDoc}
      */

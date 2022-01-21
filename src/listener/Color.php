@@ -4,6 +4,7 @@ namespace nadar\quill\listener;
 
 use nadar\quill\Line;
 use nadar\quill\InlineListener;
+
 /**
  * Convert color attributes into span tag.
  *
@@ -13,11 +14,13 @@ use nadar\quill\InlineListener;
 class Color extends InlineListener
 {
     const ATTRIBUTE_NAME = 'color';
+
     /**
      * @var boolean If ignore is enabled, the colors won't apply. This can be use full if coloring is disabled in your quill editor
      * but people copy past content from somewhere else which will then generate the color attribute.
      */
     public $ignore = false;
+
     /**
      * {@inheritDoc}
      */

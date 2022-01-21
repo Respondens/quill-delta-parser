@@ -2,9 +2,6 @@
 
 namespace nadar\quill\tests;
 
-use nadar\quill\listener\Heading;
-use nadar\quill\listener\Italic;
-use nadar\quill\listener\Text;
 use PHPUnit\Framework\TestCase;
 use nadar\quill\Lexer;
 use nadar\quill\Debug;
@@ -78,30 +75,9 @@ class ParserTest extends TestCase
     public function testDebugPrint()
     {
         $lexer = new Lexer([["attributes" => ['none' => true], "insert" => "not"], ["insert" => "f\nfoo\n"]]);
-        $this->assertSame('<p>notf</p><p>foo</p>', $lexer->render());
+        $this->assertSame('<p>f</p><p>foo</p>', $lexer->render());
         
         $debug = new Debug($lexer);
         $this->assertNotNull($debug->debugPrint());
-    }
-
-    public function testTextRenderWithoutUnknownAttributes()
-    {
-$json = <<<'JSON'
-    {"ops":[
-      {"insert":"xyz\n","attributes":{"bold":true}},
-      {"insert":"regular"},
-      {"insert":"bold","attributes":{"bold":true}},
-      {"insert":"italic", "attributes":{"italic":true}},
-      {"insert":"\n","attributes":{"header":1}},
-      {"insert":"xyz\n"}
-    ]}
-JSON;
-
-        $lexer = new Lexer($json,false);
-
-        $lexer->registerListener(new Text());
-        $lexer->registerListener(new Italic());
-        $lexer->registerListener(new Heading());
-        $this->assertSame('<p>xyz</p><h1>regularbold<em>italic</em></h1><p>xyz</p>', $lexer->render());
     }
 }

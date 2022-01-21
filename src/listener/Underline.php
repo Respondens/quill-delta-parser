@@ -13,14 +13,12 @@ use nadar\quill\Line;
  */
 class Underline extends InlineListener
 {
-    const ATTRIBUTE_NAME = 'underline';
-
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        if ($line->getAttribute(self::ATTRIBUTE_NAME)) {
+        if ($line->getAttribute('underline')) {
             $this->updateInput($line, '<u>' . $line->getInput() . '</u>');
         }
     }

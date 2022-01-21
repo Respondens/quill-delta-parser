@@ -14,8 +14,6 @@ use nadar\quill\BlockListener;
  */
 class Video extends BlockListener
 {
-    const ATTRIBUTE_NAME = 'video';
-
     /**
      * @var array Allow options for iframe allow param
      * @since 2.5.0
@@ -32,7 +30,7 @@ class Video extends BlockListener
      */
     public function process(Line $line)
     {
-        $embedUrl = $line->insertJsonKey(self::ATTRIBUTE_NAME);
+        $embedUrl = $line->insertJsonKey('video');
         if ($embedUrl) {
             $line->output = str_replace(['{url}', '{allow}'], [$line->getLexer()->escape($embedUrl), implode("; ", $this->allow)], $this->wrapper);
             $line->setDone();

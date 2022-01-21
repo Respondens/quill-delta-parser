@@ -14,14 +14,12 @@ use nadar\quill\Lexer;
  */
 class Blockquote extends BlockListener
 {
-    const ATTRIBUTE_NAME = 'blockquote';
-
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        if ($line->getAttribute(self::ATTRIBUTE_NAME)) {
+        if ($line->getAttribute('blockquote')) {
             $this->pick($line);
             $line->setDone();
         }

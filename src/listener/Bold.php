@@ -13,14 +13,12 @@ use nadar\quill\InlineListener;
  */
 class Bold extends InlineListener
 {
-    const ATTRIBUTE_NAME = 'bold';
-
     /**
      * {@inheritDoc}
      */
     public function process(Line $line)
     {
-        if ($line->getAttribute(self::ATTRIBUTE_NAME)) {
+        if ($line->getAttribute('bold')) {
             $this->updateInput($line, '<strong>' . $line->getInput() . '</strong>');
         }
     }

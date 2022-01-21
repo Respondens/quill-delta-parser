@@ -21,10 +21,10 @@ class LineTest extends TestCase
             return false;
         }));
 
-        $this->assertNull($line->while(function (&$index, Line $line) {
+        $this->assertNull($line->while_php5(function (&$index, Line $line) {
             $index++;
         }));
-        $this->assertNull($line->while(function (&$index, Line $line) {
+        $this->assertNull($line->while_php5(function (&$index, Line $line) {
             $index--;
         }));
         $this->assertFalse($line->previous());
@@ -57,6 +57,7 @@ class LineTest extends TestCase
         $line1 = null;
         $line0->whileNext(function ($line) use (&$line1) {
             $line1 = $line;
+
             return false;
         });
         
@@ -68,6 +69,7 @@ class LineTest extends TestCase
         $prevLine = null;
         $line1->whilePrevious(function ($line) use (&$prevLine) {
             $prevLine = $line;
+
             return false;
         });
 

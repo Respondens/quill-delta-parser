@@ -12,6 +12,7 @@ use nadar\quill\Lexer;
 class DeltaTestCase extends TestCase
 {
     public $json;
+
     public $html;
 
     public function getLexer()

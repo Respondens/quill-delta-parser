@@ -24,7 +24,7 @@ class Font extends InlineListener
      */
     public function process(Line $line)
     {
-        if (($font = $line->getAttribute('font'))) {
+        if ($font = $line->getAttribute('font')) {
             $this->updateInput($line, $this->applyTemplate($font, $line));
         }
     }
@@ -42,6 +42,6 @@ class Font extends InlineListener
             return $line->input;
         }
 
-        return '<span style="font-family: '.$line->getLexer()->escape($font).';">'. $line->input . '</span>';
+        return '<span style="font-family: ' . $line->getLexer()->escape($font) . ';">' . $line->input . '</span>';
     }
 }

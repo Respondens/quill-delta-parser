@@ -26,7 +26,7 @@ class Line
      * @var integer The status of the line if some of the listeneres marked this line as done.
      */
     const STATUS_DONE = 3;
-    
+
     /**
      * @var array An array with values which can be prependend to the actuall input string. This is mainly used if inline
      * elements are passed to the next "not" inline element.
@@ -54,7 +54,7 @@ class Line
      * @var integer The ID/Index/Row of the line
      */
     protected $index;
-    
+
     /**
      * @var array An array with all attributes which are assigned to this lines. attribute can be inline markers like
      * bold, italic, links and so on.
@@ -90,7 +90,7 @@ class Line
      * @var boolean Whether this line has a newline or not, this information is already provided by the lines to ops method.
      */
     protected $hasNewline;
-    
+
     /**
      * Constructor
      *
@@ -167,7 +167,7 @@ class Line
         if ($this->isEscaped()) {
             return $this->input;
         }
-        
+
         return $this->lexer->escape($this->getUnsafeInput());
     }
 
@@ -238,6 +238,7 @@ class Line
     public function renderPrepend()
     {
         ksort($this->prepend);
+
         return implode("", array_unique($this->prepend));
     }
 
@@ -253,7 +254,7 @@ class Line
      * ```php
      * $buffer = null;
      *
-     * $line->while(function (&$index, Line $line) use (&$buffer) {
+     * $line->while_php5(function (&$index, Line $line) use (&$buffer) {
      *     $index++;
      *     $buffer.= $line->input;
      *
@@ -271,19 +272,18 @@ class Line
      * second is the current line.
      * @return void
      */
-    public function while(callable $condition)
+    public function while_php5(callable $condition)
     {
         $iterate = true;
         $i = $this->getIndex();
         while ($iterate) {
             $line = $this->lexer->getLine($i);
-
             if (!$line) {
                 $iterate = false;
+
                 return;
             }
             $iterate = call_user_func_array($condition, [&$i, $line]);
-
             if ($iterate !== false) {
                 $iterate = true;
             }
@@ -302,13 +302,14 @@ class Line
     {
         $next = $this->next();
         if ($next) {
-            return $next->while(function (&$index, Line $line) use ($condition) {
+            return $next->while_php5(function (&$index, Line $line) use($condition) {
                 $index++;
+
                 return call_user_func($condition, $line);
             });
         }
     }
-    
+
     /**
      * While loop up (to the previous elements) until false is returend.
      *
@@ -321,7 +322,7 @@ class Line
     {
         $previous = $this->previous();
         if ($previous) {
-            return $previous->while(function (&$index, Line $line) use ($condition) {
+            return $previous->while_php5(function (&$index, Line $line) use($condition) {
                 $index--;
 
                 return call_user_func($condition, $line);
@@ -394,7 +395,7 @@ class Line
         }
 
         return $this->iterate($this, function ($i) {
-            return $i+1;
+            return $i + 1;
         }, $fn);
     }
 
@@ -421,7 +422,7 @@ class Line
         }
 
         return $this->iterate($this, function ($i) {
-            return $i-1;
+            return $i - 1;
         }, $fn);
     }
 
@@ -438,7 +439,7 @@ class Line
      *
      * @return boolean
      */
-    public function isInline(): bool
+    public function isInline()
     {
         return $this->isInline;
     }
@@ -473,7 +474,7 @@ class Line
     {
         return $this->index;
     }
-    
+
     /**
      * Set this line as picked.
      */
@@ -556,7 +557,6 @@ class Line
         if (!$this->isJsonInsert()) {
             return false;
         }
-
         $insert = $this->getArrayInsert();
 
         return array_key_exists($key, $insert) ? $insert[$key] : false;
@@ -583,7 +583,7 @@ class Line
      * @return array
      * @since 1.3.0
      */
-    public function getDebugInfo() : array
+    public function getDebugInfo()
     {
         return $this->_debug;
     }

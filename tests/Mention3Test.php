@@ -15,6 +15,7 @@ class Mention3Test extends DeltaTestCase
     {"insert":"\n"}
 ]
 JSON;
+
     public $html = <<<'EOT'
 <p>at mention between hash mention</p>
 EOT;

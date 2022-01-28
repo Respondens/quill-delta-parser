@@ -26,7 +26,6 @@ class Mention extends InlineListener
     public function process(Line $line)
     {
         $mention = $line->insertJsonKey('mention');
-
         if ($mention) {
             $this->updateInput($line, $line->getLexer()->escape($mention['value']));
         }

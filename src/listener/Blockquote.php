@@ -14,7 +14,6 @@ use nadar\quill\Lexer;
  */
 class Blockquote extends BlockListener
 {
-
     /**
      * {@inheritDoc}
      */

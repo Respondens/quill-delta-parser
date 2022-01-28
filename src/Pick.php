@@ -71,6 +71,6 @@ class Pick
      */
     public function isLast()
     {
-        return (count($this->listener->picks()) - 1) == $this->index;
+        return count($this->listener->picks()) - 1 == $this->index;
     }
 }

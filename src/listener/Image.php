@@ -16,7 +16,7 @@ use nadar\quill\InlineListener;
 class Image extends InlineListener
 {
     public $wrapper = '<img src="{src}" alt="" class="img-responsive img-fluid" />';
-    
+
     /**
      * {@inheritDoc}
      */

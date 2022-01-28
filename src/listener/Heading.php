@@ -46,7 +46,6 @@ class Heading extends BlockListener
                 throw new Exception('An unknown heading level "' . $pick->heading . '" has been detected.');
             }
         }
-        
         $this->wrapElement('<h{heading}>{__buffer__}</h{heading}>', ['heading']);
     }
 }

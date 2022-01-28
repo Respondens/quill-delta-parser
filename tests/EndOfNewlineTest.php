@@ -9,6 +9,7 @@ class EndOfNewlineTest extends DeltaTestCase
   {"insert":"\n\nFooter.\n"}    
 ]}
 JSON;
+
     public $html = <<<'EOT'
 <p><br></p>
 <p><br></p>

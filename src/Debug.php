@@ -44,11 +44,13 @@ class Debug
     protected function getNotDoneLines()
     {
         $lines = [];
+
         foreach ($this->lexer->getLines() as $line) {
             if (!$line->isDone()) {
                 $lines[] = $line;
             }
         }
+
         return $lines;
     }
 
@@ -60,6 +62,7 @@ class Debug
     protected function getNotPickedLines()
     {
         $lines = [];
+
         foreach ($this->lexer->getLines() as $line) {
             if (!$line->isPicked() && !$line->isDone()) {
                 $lines[] = $line;
@@ -77,14 +80,12 @@ class Debug
     public function debugPrint()
     {
         $d = "<p><b>NOT PICKED LINES</b></p>";
-        $d.= $this->getLinesTable($this->getNotPickedLines());
+        $d .= $this->getLinesTable($this->getNotPickedLines());
+        $d .= "<p><b>NOT DONE LINES</b></p>";
+        $d .= $this->getLinesTable($this->getNotDoneLines());
+        $d .= "<p><b>LINE BY LINE</b></p>";
+        $d .= $this->getLinesTable($this->lexer->getLines());
 
-        $d.= "<p><b>NOT DONE LINES</b></p>";
-        $d.= $this->getLinesTable($this->getNotDoneLines());
-        
-        $d.= "<p><b>LINE BY LINE</b></p>";
-        $d.= $this->getLinesTable($this->lexer->getLines());
-        
         return nl2br($d);
     }
 
@@ -97,20 +98,9 @@ class Debug
     public function getLinesTable(array $lines)
     {
         $_lines = [];
+
         foreach ($lines as $line) {
-            $_lines[] = [
-                $line->getIndex(),
-                htmlentities($line->input, ENT_QUOTES),
-                htmlentities($line->output, ENT_QUOTES),
-                htmlentities($line->renderPrepend(), ENT_QUOTES),
-                implode(", ", $line->getDebugInfo()),
-                var_export($line->getAttributes(), true),
-                var_export($line->isInline(), true),
-                $this->lineStatus($line),
-                var_export($line->hasEndNewline(), true),
-                var_export($line->hasNewline(), true),
-                var_export($line->isEmpty(), true),
-            ];
+            $_lines[] = [$line->getIndex(), htmlentities($line->input, ENT_QUOTES), htmlentities($line->output, ENT_QUOTES), htmlentities($line->renderPrepend(), ENT_QUOTES), implode(", ", $line->getDebugInfo()), var_export($line->getAttributes(), true), var_export($line->isInline(), true), $this->lineStatus($line), var_export($line->hasEndNewline(), true), var_export($line->hasNewline(), true), var_export($line->isEmpty(), true)];
         }
 
         return $this->renderTable($_lines, ['ID', 'input', 'output', 'prepend', 'debug', 'attributes', 'is inline', 'status', 'has end newline', 'has new line', 'is empty']);
@@ -141,19 +131,20 @@ class Debug
     protected function renderTable(array $rows, array $head = [])
     {
         $buffer = '<table class="table table-bordered table-striped table-hover table-sm small" border="1" width="100%" cellpadding="3" cellspacing="0">';
-        
         if (!empty($head)) {
-            $buffer.= '<thead><tr>';
+            $buffer .= '<thead><tr>';
+
             foreach ($head as $col) {
-                $buffer.= '<td><b>'.$col.'</b></td>';
+                $buffer .= '<td><b>' . $col . '</b></td>';
             }
-            $buffer.= '</tr></thead>';
+            $buffer .= '</tr></thead>';
         }
 
         foreach ($rows as $cols) {
             $buffer .= '<tr onclick="this.style.backgroundColor=(this.style.backgroundColor==\'red\')?(\'transparent\'):(\'red\');">';
+
             foreach ($cols as $col) {
-                $buffer .= '<td>'.$col.'</td>';
+                $buffer .= '<td>' . $col . '</td>';
             }
             $buffer .= '</tr>';
         }

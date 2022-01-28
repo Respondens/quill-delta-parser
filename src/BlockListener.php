@@ -15,11 +15,11 @@ abstract class BlockListener extends Listener
     /**
      * {@inheritDoc}
      */
-    public function type(): int
+    public function type()
     {
         return self::TYPE_BLOCK;
     }
-    
+
     /**
      * Generate a rendered output from the current picks with a custom Wrapper Template.
      *
@@ -61,16 +61,16 @@ abstract class BlockListener extends Listener
     protected function wrapElement($wrapper, array $options = [])
     {
         $search = ['{__buffer__}'];
+
         foreach ($options as $key => $value) {
-            $search[] = is_integer($key) ? '{'.$value.'}' : '{'.$key.'}';
+            $search[] = is_integer($key) ? '{' . $value . '}' : '{' . $key . '}';
         }
-        
+
         foreach ($this->picks() as $pick) {
             $first = $this->getFirstLine($pick);
-
             // while from first to the pick line and store content in buffer
             $buffer = null;
-            $first->while(function (&$index, Line $line) use (&$buffer, $pick, $first) {
+            $first->while_php5(function (&$index, Line $line) use(&$buffer, $pick, $first) {
                 $index++;
                 $buffer .= $line->getInput();
                 $line->setDone();
@@ -79,15 +79,14 @@ abstract class BlockListener extends Listener
                     return false;
                 }
             });
-
             $replace = [$buffer];
+
             foreach ($options as $key => $value) {
                 $name = is_integer($key) ? $value : $key;
-                $content = $pick->$name;
+                $content = $pick->{$name};
                 $value = is_callable($value) ? call_user_func($value, $content, $pick, $name) : $content;
                 $replace[] = $value;
             }
-            
             $pick->line->output = str_replace($search, $replace, $wrapper);
             $pick->line->setDone();
         }
@@ -101,25 +100,23 @@ abstract class BlockListener extends Listener
      * @return Line
      * @since 1.3.2
      */
-    protected function getFirstLine(Pick $pick) : Line
+    protected function getFirstLine(Pick $pick)
     {
         $first = $pick->line;
-
-        $pick->line->while(
-            function (&$index, Line $line) use ($pick, &$first) {
-                $index--;
-                // its the same line as the start.. skip this one as its by default included in while operations
-                if ($line === $pick->line) {
-                    return true;
-                } elseif (($line->hasEndNewline() || $line->hasNewline() || ($line->isJsonInsert() && !$line->isInline()))) {
-                    return false;
-                }
-
-                // assign the line to $first
-                $first = $line;
+        $pick->line->while_php5(function (&$index, Line $line) use($pick, &$first) {
+            $index--;
+            // its the same line as the start.. skip this one as its by default included in while operations
+            if ($line === $pick->line) {
                 return true;
+            } elseif ($line->hasEndNewline() || $line->hasNewline() || $line->isJsonInsert() && !$line->isInline()) {
+                return false;
             }
-        );
+            // assign the line to $first
+            $first = $line;
+
+            return true;
+        });
+
         return $first;
     }
 }

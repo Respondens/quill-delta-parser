@@ -14,7 +14,6 @@ use nadar\quill\Line;
  */
 class Script extends InlineListener
 {
-
     public $scriptTags = ['super', 'sub'];
 
     /**
@@ -22,7 +21,7 @@ class Script extends InlineListener
      */
     public function process(Line $line)
     {
-        if (($script = $line->getAttribute('script'))) {
+        if ($script = $line->getAttribute('script')) {
             $this->updateInput($line, $this->applyTemplate($script, $line));
         }
     }
@@ -42,9 +41,9 @@ class Script extends InlineListener
             throw new Exception('An unknown script tag "' . $script . '" has been detected.');
         }
         if ($script === 'super') {
-          $script = 'sup';
+            $script = 'sup';
         }
 
-        return '<'.$script.'>'. $line->input . '</'.$script.'>';
+        return '<' . $script . '>' . $line->input . '</' . $script . '>';
     }
 }

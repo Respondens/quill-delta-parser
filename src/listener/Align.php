@@ -44,9 +44,7 @@ class Align extends BlockListener
                 // prevent html injection in case the attribute is user input
                 throw new Exception('An unknown alignment "' . $pick->alignment . '" has been detected.');
             }
-
         }
-
         $this->wrapElement('<p style="text-align: {alignment};">{__buffer__}</p>', ['alignment']);
     }
 }
